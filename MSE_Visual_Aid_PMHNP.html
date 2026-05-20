@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mental Status Exam — PMHNP Visual Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --c1: #0F766E; --c1l: #CCFBF1; --c1d: #134E4A;
+    --c2: #2563EB; --c2l: #DBEAFE; --c2d: #1E3A8A;
+    --c3: #7C3AED; --c3l: #EDE9FE; --c3d: #4C1D95;
+    --c4: #DB2777; --c4l: #FCE7F3; --c4d: #831843;
+    --c5: #D97706; --c5l: #FEF3C7; --c5d: #78350F;
+    --c6: #4F46E5; --c6l: #E0E7FF; --c6d: #312E81;
+    --c7: #DC2626; --c7l: #FEE2E2; --c7d: #7F1D1D;
+    --c8: #059669; --c8l: #D1FAE5; --c8d: #064E3B;
+    --c9: #EA580C; --c9l: #FFEDD5; --c9d: #7C2D12;
+    --c10: #9333EA; --c10l: #F3E8FF; --c10d: #581C87;
+    --bg: #0F172A; --surface: #1E293B; --surface2: #334155;
+    --text: #F1F5F9; --text2: #94A3B8; --text3: #CBD5E1;
+    --border: rgba(255,255,255,0.08);
+    --font-head: 'Sora', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.6; }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: linear-gradient(135deg, #0F172A 0%, #1a1040 50%, #0F172A 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .site-header::before {
+    content:'';
+    position: absolute; inset:0;
+    background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,58,237,0.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(124,58,237,0.2);
+    color: #C4B5FD;
+    border: 1px solid rgba(124,58,237,0.4);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    font-family: var(--font-mono);
+  }
+  .site-header h1 {
+    font-family: var(--font-head);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -.03em;
+    background: linear-gradient(135deg, #E2E8F0 20%, #A78BFA 60%, #38BDF8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: .5rem;
+  }
+  .site-header p {
+    color: var(--text2);
+    font-size: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .section-count {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+  .section-count a {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    text-decoration: none;
+    transition: transform .2s, opacity .2s;
+  }
+  .section-count a:hover { transform: scale(1.2); opacity: 1; }
+
+  /* ── NAV ── */
+  .sticky-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(15,23,42,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+  }
+  .nav-btn {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: all .18s;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .nav-btn:hover { transform: translateY(-1px); }
+
+  /* ── MAIN LAYOUT ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  /* ── SECTION CARDS ── */
+  .mse-section {
+    margin-bottom: 2.5rem;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .section-header {
+    padding: 1.4rem 1.8rem 1.2rem;
+    display: flex; align-items: flex-start; gap: 1rem;
+  }
+  .section-num {
+    width: 42px; height: 42px; min-width: 42px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-head);
+    font-size: 18px; font-weight: 800;
+    color: white;
+  }
+  .section-title-block { flex: 1; }
+  .section-title {
+    font-family: var(--font-head);
+    font-size: 1.5rem; font-weight: 700;
+    letter-spacing: -.02em;
+    margin-bottom: 2px;
+  }
+  .section-subtitle { font-size: 13px; opacity: .75; }
+  .section-body { background: var(--surface); padding: 1.5rem 1.8rem 1.8rem; }
+
+  /* ── GRIDS ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+  .grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .75rem; }
+  @media(max-width:700px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* ── CONTENT CARDS ── */
+  .card {
+    background: var(--surface2);
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+  }
+  .card h4 {
+    font-family: var(--font-head);
+    font-size: 13px; font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: .6rem;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .card ul { list-style: none; }
+  .card ul li {
+    font-size: 13.5px; padding: 3px 0 3px 1.1rem;
+    position: relative; color: var(--text3);
+  }
+  .card ul li::before {
+    content: '›';
+    position: absolute; left: 0;
+    font-size: 16px; line-height: 1;
+    top: 4px;
+  }
+  .card p { font-size: 13.5px; color: var(--text3); }
+
+  /* ── DIAGNOSTIC PEARLS ── */
+  .dx-box {
+    border-radius: 14px;
+    padding: 1.1rem 1.3rem;
+    margin-top: 1rem;
+  }
+  .dx-box h4 {
+    font-family: var(--font-head);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: .75rem;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .dx-grid { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .dx-tag {
+    display: flex; align-items: flex-start; gap: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 12.5px;
+    flex: 1 1 260px;
+  }
+  .dx-tag .dx-label {
+    font-weight: 700;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+  .dx-tag .dx-detail { color: var(--text2); font-size: 12px; }
+
+  /* ── TERM PILL ── */
+  .term {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin: 2px;
+  }
+
+  /* ── MNEMONIC BOX ── */
+  .mnemonic {
+    background: rgba(255,255,255,0.04);
+    border-left: 3px solid;
+    border-radius: 0 10px 10px 0;
+    padding: .8rem 1rem;
+    margin: .75rem 0;
+    font-size: 13.5px;
+  }
+  .mnemonic strong { font-weight: 700; }
+
+  /* ── AFFECT TABLE ── */
+  .affect-row {
+    display: flex; align-items: flex-start; gap: .75rem;
+    padding: .6rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .affect-row:last-child { border-bottom: none; }
+  .affect-label {
+    min-width: 110px;
+    font-weight: 700;
+    font-size: 13px;
+    font-family: var(--font-mono);
+    padding-top: 1px;
+  }
+  .affect-desc { font-size: 13px; color: var(--text3); }
+
+  /* ── SPECTRUM BAR ── */
+  .spectrum {
+    display: flex;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 36px;
+    margin: .5rem 0;
+  }
+  .spec-seg {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10.5px; font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0 4px;
+  }
+
+  /* ── THOUGHT PROCESS FLOW ── */
+  .tp-flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: .5rem;
+  }
+  .tp-node {
+    min-width: 100px;
+    text-align: center;
+    padding: .6rem .5rem;
+    border-radius: 10px;
+    font-size: 11.5px; font-weight: 700;
+    white-space: nowrap;
+  }
+  .tp-arrow {
+    font-size: 18px;
+    color: var(--text2);
+    padding: 0 4px;
+    flex-shrink: 0;
+  }
+
+  /* ── COGNITION TIMELINE ── */
+  .cog-item {
+    display: flex; align-items: flex-start; gap: .75rem;
+    margin-bottom: .75rem;
+  }
+  .cog-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 5px;
+  }
+
+  /* ── ICON CIRCLES ── */
+  .icon-circle {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none; border-top: 1px solid var(--border);
+    margin: 1rem 0;
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-radius: 10px;
+    padding: .7rem 1rem;
+    font-size: 13px;
+    margin: .75rem 0;
+    display: flex; gap: .6rem; align-items: flex-start;
+  }
+  .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--text2);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Section-specific accent */
+  .s1 .section-header { background: linear-gradient(135deg, #0F766E22, #0F766E08); }
+  .s2 .section-header { background: linear-gradient(135deg, #2563EB22, #2563EB08); }
+  .s3 .section-header { background: linear-gradient(135deg, #7C3AED22, #7C3AED08); }
+  .s4 .section-header { background: linear-gradient(135deg, #DB277722, #DB277708); }
+  .s5 .section-header { background: linear-gradient(135deg, #D9770622, #D9770608); }
+  .s6 .section-header { background: linear-gradient(135deg, #4F46E522, #4F46E508); }
+  .s7 .section-header { background: linear-gradient(135deg, #DC262622, #DC262608); }
+  .s8 .section-header { background: linear-gradient(135deg, #05966922, #05966908); }
+  .s9 .section-header { background: linear-gradient(135deg, #EA580C22, #EA580C08); }
+  .s10 .section-header { background: linear-gradient(135deg, #9333EA22, #9333EA08); }
+
+  /* Subheading style */
+  .sub-h {
+    font-family: var(--font-head);
+    font-size: 13px; font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    margin: 1.1rem 0 .5rem;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* Key term highlighting */
+  em { font-style: normal; font-weight: 700; color: #E2E8F0; }
+
+  .wide-card {
+    background: var(--surface2);
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    margin-bottom: .75rem;
+  }
+  .wide-card h4 {
+    font-family: var(--font-head);
+    font-size: 14px; font-weight: 700;
+    margin-bottom: .4rem;
+  }
+  .wide-card p, .wide-card li { font-size: 13.5px; color: var(--text3); }
+  .wide-card ul { padding-left: 1rem; }
+  .wide-card ul li { margin-bottom: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="badge">PMHNP Clinical Reference · NURS 632</div>
+  <h1>Mental Status Exam</h1>
+  <p>A comprehensive visual reference for psychiatric assessment — 10 domains, diagnostic pearls, and clinical descriptors</p>
+  <div class="section-count">
+    <a href="#s1" style="background:#0F766E22;color:#5EEAD4;border:1px solid #0F766E44;">1</a>
+    <a href="#s2" style="background:#2563EB22;color:#93C5FD;border:1px solid #2563EB44;">2</a>
+    <a href="#s3" style="background:#7C3AED22;color:#C4B5FD;border:1px solid #7C3AED44;">3</a>
+    <a href="#s4" style="background:#DB277722;color:#F9A8D4;border:1px solid #DB277744;">4</a>
+    <a href="#s5" style="background:#D9770622;color:#FCD34D;border:1px solid #D9770644;">5</a>
+    <a href="#s6" style="background:#4F46E522;color:#A5B4FC;border:1px solid #4F46E544;">6</a>
+    <a href="#s7" style="background:#DC262622;color:#FCA5A5;border:1px solid #DC262644;">7</a>
+    <a href="#s8" style="background:#05966922;color:#6EE7B7;border:1px solid #05966944;">8</a>
+    <a href="#s9" style="background:#EA580C22;color:#FDBA74;border:1px solid #EA580C44;">9</a>
+    <a href="#s10" style="background:#9333EA22;color:#D8B4FE;border:1px solid #9333EA44;">10</a>
+  </div>
+</header>
+
+<!-- ── STICKY NAV ── -->
+<nav class="sticky-nav">
+  <a href="#s1" class="nav-btn" style="color:#5EEAD4;border-color:#0F766E44;background:#0F766E18;">Appearance</a>
+  <a href="#s2" class="nav-btn" style="color:#93C5FD;border-color:#2563EB44;background:#2563EB18;">Behavior</a>
+  <a href="#s3" class="nav-btn" style="color:#C4B5FD;border-color:#7C3AED44;background:#7C3AED18;">Mood</a>
+  <a href="#s4" class="nav-btn" style="color:#F9A8D4;border-color:#DB277744;background:#DB277718;">Affect</a>
+  <a href="#s5" class="nav-btn" style="color:#FCD34D;border-color:#D9770644;background:#D9770618;">Speech</a>
+  <a href="#s6" class="nav-btn" style="color:#A5B4FC;border-color:#4F46E544;background:#4F46E518;">Thought Process</a>
+  <a href="#s7" class="nav-btn" style="color:#FCA5A5;border-color:#DC262644;background:#DC262618;">Thought Content</a>
+  <a href="#s8" class="nav-btn" style="color:#6EE7B7;border-color:#05966944;background:#05966918;">Cognition</a>
+  <a href="#s9" class="nav-btn" style="color:#FDBA74;border-color:#EA580C44;background:#EA580C18;">Judgment</a>
+  <a href="#s10" class="nav-btn" style="color:#D8B4FE;border-color:#9333EA44;background:#9333EA18;">Insight</a>
+</nav>
+
+<div class="container">
+
+<!-- ════════════════════════════════════════════════
+     SECTION 1 · APPEARANCE
+════════════════════════════════════════════════ -->
+<section id="s1" class="mse-section s1">
+  <div class="section-header">
+    <div class="section-num" style="background:#0F766E;">1</div>
+    <div class="section-title-block">
+      <div class="section-title" style="color:#5EEAD4;">Appearance</div>
+      <div class="section-subtitle">Static, observable features — "if you can capture it in a photo, it's appearance"</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="callout" style="background:#0F766E18;border-left:3px solid #0F766E;">
+      <span class="callout-icon">💡</span>
+      <span><em>Key rule:</em> Photo = Appearance · Movie = Behavior. A frozen facial expression (blank stare) is appearance; shifting expressions throughout the interview is behavior.</span>
+    </div>
+    <div class="grid-3" style="margin-top:1rem;">
+      <div class="card">
+        <h4 style="color:#5EEAD4;">🧍 General</h4>
+        <ul>
+          <li>Gender, stated age</li>
+          <li>Appears stated / older / younger</li>
+          <li>Body type: ecto, meso, endomorph</li>
+          <li>Underweight / overweight / muscular</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 style="color:#5EEAD4;">👕 Clothing</h4>
+        <ul>
+          <li>Formal vs. casual vs. hospital gown</li>
+          <li>Clean / dirty / torn / stained</li>
+          <li>Mismatched, weather-inappropriate</li>
+          <li>Colors, patterns, style</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 style="color:#5EEAD4;">🧼 Hygiene</h4>
+        <ul>
+          <li>Body odor, urine/feces odor</li>
+          <li>Food stains (bib area)</li>
+          <li>Well-groomed vs. unkempt</li>
+          <li>Perfume / cologne present</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 style="color:#5EEAD4;">💇 Hair & Face</h4>
+        <ul>
+          <li>Short / long / bald / matted</li>
+          <li>Lanugo hair (anorexia clue)</li>
+          <li>Facial hair: beard / unshaven</li>
+          <li>Makeup: careful / carelessly done / excessive</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 style="color:#5EEAD4;">👁️ Eye Contact</h4>
+        <ul>
+          <li>Sustained, downcast gaze</li>
+          <li>Avoiding eye contact entirely</li>
+          <li>Staring <em>through</em> interviewer</li>
+          <li>(If changes during interview → Behavior)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 style="color:#5EEAD4;">🪪 ID Markings</h4>
+        <ul>
+          <li>Scars, bruises, tattoos</li>
+          <li>Needle tracks (IV drug use)</li>
+          <li>Piercings, jewelry</li>
+          <li>Missing teeth</li>
+        </ul>
+      </div>
+    </div>
+    <div class="dx-box" style="background:#0F766E12;border:1px solid #0F766E40;">
+      <h4 style="color:#5EEAD4;">🔬 Diagnostic Pearls — Appearance</h4>
+      <div class="dx-grid">
+        <div class="dx-tag"><span class="dx-label" style="color:#5EEAD4;">MDD</span><span class="dx-detail">Poor grooming, poor hygiene, psychomotor changes visible</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#5EEAD4;">Anorexia</span><span class="dx-detail">Low body weight, baggy clothes, lanugo hair on skin</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#5EEAD4;">Mania</span><span class="dx-detail">Excessive makeup, jewelry, bright/bizarre clothing</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#5EEAD4;">SUD – ETOH</span><span class="dx-detail">Arcus senilis, bruising, palmar erythema, spider angiomata</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#5EEAD4;">SUD – IV</span><span class="dx-detail">Needle tracks, long sleeves to hide marks</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#5EEAD4;">Dementia</span><span class="dx-detail">Poor grooming, food stains on bib, body odor</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#5EEAD4;">Trichotillomania</span><span class="dx-detail">Patchy hair loss, absent eyebrows</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     SECTION 2 · BEHAVIOR
+════════════════════════════════════════════════ -->
+<section id="s2" class="mse-section s2">
+  <div class="section-header">
+    <div class="section-num" style="background:#2563EB;">2</div>
+    <div class="section-title-block">
+      <div class="section-title" style="color:#93C5FD;">Behavior</div>
+      <div class="section-subtitle">Dynamic observations — psychomotor level + attitude toward interviewer</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="grid-2">
+      <div>
+        <div class="sub-h" style="color:#93C5FD;">⚡ Psychomotor Level</div>
+        <div class="wide-card">
+          <h4 style="color:#93C5FD;">Agitated / Increased</h4>
+          <p>Tapping foot · shifting in chair · rocking · squirming · hand gesturing · hand wringing · pacing · drumming fingers · unable to sit still</p>
+        </div>
+        <div class="wide-card">
+          <h4 style="color:#93C5FD;">Calm / Decreased</h4>
+          <p>Sitting quietly · slowed movements · minimal spontaneous movement · catatonic posturing · stooped / hunched posture</p>
+        </div>
+        <div class="wide-card">
+          <h4 style="color:#93C5FD;">Involuntary Movements</h4>
+          <ul>
+            <li>Grimacing, tics, twitches, blinking</li>
+            <li>Lip smacking (Tardive Dyskinesia)</li>
+            <li>Hand tremor (Lithium/Depakote)</li>
+            <li>Akathisia — restlessness from DA blockade</li>
+            <li>Dystonia — abrupt muscle spasms</li>
+            <li>Echopraxia — imitating another's movements</li>
+            <li>Asterixis — "flapping" tremor</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="sub-h" style="color:#93C5FD;">🤝 Attitude Toward Interviewer</div>
+        <div class="grid-auto">
+          <div class="card" style="border-color:#10B98130;">
+            <h4 style="color:#10B981;">Cooperative</h4>
+            <p style="font-size:12.5px;">Appropriate, compliant, engaged, open</p>
+          </div>
+          <div class="card" style="border-color:#F59E0B30;">
+            <h4 style="color:#F59E0B;">Guarded</h4>
+            <p style="font-size:12.5px;">Evasive, withdrawn, aloof, passive, disinterested</p>
+          </div>
+          <div class="card" style="border-color:#EF444430;">
+            <h4 style="color:#EF4444;">Hostile</h4>
+            <p style="font-size:12.5px;">Defensive, aggressive, manipulative, threatening, demanding</p>
+          </div>
+          <div class="card" style="border-color:#A855F730;">
+            <h4 style="color:#A855F7;">Unusual</h4>
+            <p style="font-size:12.5px;">Seductive, provocative, condescending, suspicious, puzzled</p>
+          </div>
+        </div>
+        <div class="callout" style="background:#2563EB18;border-left:3px solid #2563EB;margin-top:.75rem;">
+          <span class="callout-icon">✏️</span>
+          <span><em>Contextualize!</em> "Scowling while describing how family insisted he get help" is far more descriptive than simply "scowling."</span>
+        </div>
+      </div>
+    </div>
+    <div class="dx-box" style="background:#2563EB12;border:1px solid #2563EB40;margin-top:1rem;">
+      <h4 style="color:#93C5FD;">🔬 Diagnostic Pearls — Behavior</h4>
+      <div class="dx-grid">
+        <div class="dx-tag"><span class="dx-label" style="color:#93C5FD;">MDD</span><span class="dx-detail">Psychomotor retardation or agitation, withdrawn</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#93C5FD;">Mania</span><span class="dx-detail">Demanding, provocative, seductive, restless, distractible</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#93C5FD;">OCD</span><span class="dx-detail">Repetitive ritualistic behaviors visible</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#93C5FD;">GAD</span><span class="dx-detail">Muscle tension, fidgety, sweaty palms</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#93C5FD;">ASPD</span><span class="dx-detail">Calm, glib, manipulative, charming</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#93C5FD;">Psychosis</span><span class="dx-detail">Scanning room (paranoid?), responding to internal stimuli</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     SECTION 3 · MOOD
+════════════════════════════════════════════════ -->
+<section id="s3" class="mse-section s3">
+  <div class="section-header">
+    <div class="section-num" style="background:#7C3AED;">3</div>
+    <div class="section-title-block">
+      <div class="section-title" style="color:#C4B5FD;">Mood</div>
+      <div class="section-subtitle">The patient's subjective, sustained emotional "climate" — use their own words</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="callout" style="background:#7C3AED18;border-left:3px solid #7C3AED;">
+      <span class="callout-icon">🌡️</span>
+      <span><em>Mood vs. Affect:</em> Mood is the persistent emotional <em>climate</em> (weeks–months). Affect is the fluctuating emotional <em>weather</em> (minute-to-minute). Ask directly: <em>"How has your mood been lately?"</em></span>
+    </div>
+    <div class="sub-h" style="color:#C4B5FD;margin-top:1.2rem;">Types of Mood</div>
+    <div class="grid-auto">
+      <div class="card" style="border-color:#7C3AED50;">
+        <h4 style="color:#C4B5FD;">😢 Dysphoric</h4>
+        <p>Unpleasant mood — sadness, anxiety, or irritability. Umbrella term for distressing mood states.</p>
+      </div>
+      <div class="card" style="border-color:#7C3AED50;">
+        <h4 style="color:#FBBF24;">🌟 Elevated</h4>
+        <p>Exaggerated well-being, euphoria, elation. Patient may say "on top of the world" or "high."</p>
+      </div>
+      <div class="card" style="border-color:#7C3AED50;">
+        <h4 style="color:#34D399;">😊 Euthymic</h4>
+        <p>Normal mood range — absence of depressed or elevated mood. This is the baseline.</p>
+      </div>
+      <div class="card" style="border-color:#7C3AED50;">
+        <h4 style="color:#F87171;">😤 Irritable</h4>
+        <p>Easily annoyed and provoked to anger. Common in mania, MDD, PTSD, and borderline PD.</p>
+      </div>
+      <div class="card" style="border-color:#7C3AED50;">
+        <h4 style="color:#FB923C;">🌈 Expansive</h4>
+        <p>Lack of restraint in expressing feelings; over-valuation of one's significance. Seen in mania.</p>
+      </div>
+      <div class="card" style="border-color:#7C3AED50;">
+        <h4 style="color:#94A3B8;">🤷 Alexithymia</h4>
+        <p>Patient cannot describe or identify their own mood/emotional state.</p>
+      </div>
+    </div>
+    <div class="mnemonic" style="border-color:#7C3AED;margin-top:1rem;">
+      <strong>📝 Documentation tip:</strong> Always quote the patient's own words in quotation marks when recording mood.
+      E.g., Mood: "pretty down, like I'm dragging through mud" — more informative than "depressed."
+    </div>
+    <div class="dx-box" style="background:#7C3AED12;border:1px solid #7C3AED40;margin-top:.75rem;">
+      <h4 style="color:#C4B5FD;">🔬 Diagnostic Pearls — Mood</h4>
+      <div class="dx-grid">
+        <div class="dx-tag"><span class="dx-label" style="color:#C4B5FD;">Mania</span><span class="dx-detail">Elevated, expansive, or irritable mood (DSM-5-TR criterion A)</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#C4B5FD;">MDD</span><span class="dx-detail">Dysphoric, hopeless, low energy; may be irritable</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#C4B5FD;">BPD</span><span class="dx-detail">Chronic emptiness + rapid dysphoric mood shifts</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#C4B5FD;">GAD</span><span class="dx-detail">Anxious, apprehensive baseline mood</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     SECTION 4 · AFFECT
+════════════════════════════════════════════════ -->
+<section id="s4" class="mse-section s4">
+  <div class="section-header">
+    <div class="section-num" style="background:#DB2777;">4</div>
+    <div class="section-title-block">
+      <div class="section-title" style="color:#F9A8D4;">Affect</div>
+      <div class="section-subtitle">Observable expression of emotion — 4 components: State · Range · Appropriateness · Congruence</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="sub-h" style="color:#F9A8D4;">The 4 Components of Affect</div>
+    <div class="grid-2">
+      <div class="card" style="border-color:#DB277750;">
+        <h4 style="color:#F9A8D4;">① State</h4>
+        <p>Your assessment of the patient's current emotional presentation:<br>Dysphoric · Euthymic · Euphoric · Irritable · Anxious · Guarded</p>
+      </div>
+      <div class="card" style="border-color:#DB277750;">
+        <h4 style="color:#F9A8D4;">③ Appropriateness</h4>
+        <p>Does the affect match the content being discussed?<br><em>Appropriate:</em> tearful discussing loss<br><em>Inappropriate:</em> laughing when discussing death</p>
+      </div>
+      <div class="card" style="border-color:#DB277750;">
+        <h4 style="color:#F9A8D4;">④ Congruence</h4>
+        <p>Does the affect match the stated mood?<br><em>Incongruent example:</em> patient states mood is "fine" but is continuously tearful throughout the interview</p>
+      </div>
+      <div class="card" style="border-color:#DB277750;">
+        <h4 style="color:#F9A8D4;">② Range Spectrum</h4>
+        <div style="margin-top:.5rem;">
+          <div class="spectrum">
+            <div class="spec-seg" style="background:#7C3AED;color:#E9D5FF;">Full</div>
+            <div class="spec-seg" style="background:#6D28D9;color:#DDD6FE;">Restricted</div>
+            <div class="spec-seg" style="background:#5B21B6;color:#C4B5FD;">Blunted</div>
+            <div class="spec-seg" style="background:#4C1D95;color:#A78BFA;">Flat</div>
+          </div>
+          <div style="margin-top:.4rem;">
+            <div class="affect-row"><span class="affect-label" style="color:#C084FC;">Full</span><span class="affect-desc">Normal range of emotional expression (culturally contextualized)</span></div>
+            <div class="affect-row"><span class="affect-label" style="color:#A78BFA;">Restricted</span><span class="affect-desc">Mild reduction in range/intensity of expression</span></div>
+            <div class="affect-row"><span class="affect-label" style="color:#8B5CF6;">Blunted</span><span class="affect-desc">Significant reduction in emotional expression intensity</span></div>
+            <div class="affect-row"><span class="affect-label" style="color:#7C3AED;">Flat</span><span class="affect-desc">Absent or near-absent affective expression (classic schizophrenia)</span></div>
+            <div class="affect-row"><span class="affect-label" style="color:#F87171;">Labile</span><span class="affect-desc">Abrupt, rapid, extreme variability — repeated mood shifts</span></div>
+            <div class="affect-row"><span class="affect-label" style="color:#94A3B8;">Guarded</span><span class="affect-desc">Similar to restricted; patient actively appears to hide emotions</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dx-box" style="background:#DB277712;border:1px solid #DB277740;margin-top:1rem;">
+      <h4 style="color:#F9A8D4;">🔬 Diagnostic Pearls — Affect</h4>
+      <div class="dx-grid">
+        <div class="dx-tag"><span class="dx-label" style="color:#F9A8D4;">Mania</span><span class="dx-detail">Elevated/expansive mood + labile affect range</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#F9A8D4;">Schizophrenia</span><span class="dx-detail">Blunted or flat affect (negative symptom cluster)</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#F9A8D4;">MDD</span><span class="dx-detail">Restricted, constricted, or guarded affect</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#F9A8D4;">BPD</span><span class="dx-detail">Labile affect + chronic dysphoria + intense anger</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#F9A8D4;">Delirium (Hyperactive)</span><span class="dx-detail">Labile affect range</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#F9A8D4;">Delirium (Hypoactive)</span><span class="dx-detail">Blunted affect range</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     SECTION 5 · SPEECH
+════════════════════════════════════════════════ -->
+<section id="s5" class="mse-section s5">
+  <div class="section-header">
+    <div class="section-num" style="background:#D97706;">5</div>
+    <div class="section-title-block">
+      <div class="section-title" style="color:#FCD34D;">Speech</div>
+      <div class="section-subtitle">Clarity · Rate · Quantity · Tone · Flow · Volume — describe all relevant dimensions</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="grid-3">
+      <div class="card" style="border-color:#D9770650;">
+        <h4 style="color:#FCD34D;">🔊 Clarity</h4>
+        <ul>
+          <li>Clear / coherent</li>
+          <li>Slurred (dysarthric)</li>
+          <li>Mumbling / stuttering</li>
+          <li>Garbled / stammering</li>
+          <li>Accent present</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:#D9770650;">
+        <h4 style="color:#FCD34D;">⏱️ Rate</h4>
+        <ul>
+          <li>Slow</li>
+          <li>Relaxed / conversational</li>
+          <li>Rapid</li>
+          <li>Pressured (cannot interrupt)</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:#D9770650;">
+        <h4 style="color:#FCD34D;">📊 Quantity</h4>
+        <ul>
+          <li>Talkative / verbose</li>
+          <li>Increased / pressured</li>
+          <li>Minimal / decreased</li>
+          <li>Mute</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:#D9770650;">
+        <h4 style="color:#FCD34D;">🎵 Tone & Prosody</h4>
+        <ul>
+          <li>Monotonous / flat</li>
+          <li>Animated / expressive</li>
+          <li>Emphatic / excited</li>
+          <li>Sullen / irritated</li>
+          <li>Prosody = rate + volume + tone</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:#D9770650;">
+        <h4 style="color:#FCD34D;">🌊 Flow</h4>
+        <ul>
+          <li>Spontaneous vs. hesitant</li>
+          <li>Word-finding difficulties</li>
+          <li>Delayed response / latency</li>
+          <li>Fluent vs. non-fluent</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:#D9770650;">
+        <h4 style="color:#FCD34D;">📣 Volume</h4>
+        <ul>
+          <li>Whispered</li>
+          <li>Soft / quiet</li>
+          <li>Conversational</li>
+          <li>Loud / yelling</li>
+        </ul>
+      </div>
+    </div>
+    <div class="mnemonic" style="border-color:#D97706;margin-top:1rem;">
+      <strong>⚡ Pressured Speech:</strong> Increased quantity, accelerated, nearly impossible to interrupt. The patient "verbally runs you over." Often loud, emphatic, may continue even with no listener. Classic mania finding.
+    </div>
+    <div class="dx-box" style="background:#D9770612;border:1px solid #D9770640;margin-top:.75rem;">
+      <h4 style="color:#FCD34D;">🔬 Diagnostic Pearls — Speech</h4>
+      <div class="dx-grid">
+        <div class="dx-tag"><span class="dx-label" style="color:#FCD34D;">Mania</span><span class="dx-detail">Pressured speech — or rapid with increased quantity</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#FCD34D;">Anxiety</span><span class="dx-detail">Increased quantity, rapid rate</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#FCD34D;">MDD</span><span class="dx-detail">Decreased quantity, soft, monotone, reduced prosody</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#FCD34D;">Schizophrenia</span><span class="dx-detail">Decreased quantity, monotone, non-spontaneous, increased latency</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#FCD34D;">Substance intox</span><span class="dx-detail">Slurred (dysarthric), garbled speech</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     SECTION 6 · THOUGHT PROCESS
+════════════════════════════════════════════════ -->
+<section id="s6" class="mse-section s6">
+  <div class="section-header">
+    <div class="section-num" style="background:#4F46E5;">6</div>
+    <div class="section-title-block">
+      <div class="section-title" style="color:#A5B4FC;">Thought Process</div>
+      <div class="section-subtitle">The form and flow of thinking — how thoughts connect, not what they contain</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="sub-h" style="color:#A5B4FC;">Associations (Severity Continuum)</div>
+    <div class="tp-flow" style="margin-bottom:1rem;">
+      <div class="tp-node" style="background:#312E81;color:#A5B4FC;">Goal-Directed</div>
+      <div class="tp-arrow">→</div>
+      <div class="tp-node" style="background:#3730A3;color:#C7D2FE;">Circumstantial</div>
+      <div class="tp-arrow">→</div>
+      <div class="tp-node" style="background:#4338CA;color:#E0E7FF;">Tangential</div>
+      <div class="tp-arrow">→</div>
+      <div class="tp-node" style="background:#4F46E5;color:#EDE9FE;">Flight of Ideas</div>
+      <div class="tp-arrow">→</div>
+      <div class="tp-node" style="background:#6D28D9;color:#F5F3FF;">Loose Assoc.</div>
+      <div class="tp-arrow">→</div>
+      <div class="tp-node" style="background:#7C3AED;color:#FFF;">Word Salad</div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <div class="wide-card">
+          <h4 style="color:#A5B4FC;">✅ Goal-Directed / Logical</h4>
+          <p>Answers the question; clear word/sentence structure; logical linkage between ideas; gets to the point</p>
+        </div>
+        <div class="wide-card">
+          <h4 style="color:#C7D2FE;">🌀 Circumstantial</h4>
+          <p>Over-inclusive of irrelevant details — <em>eventually</em> reaches the point but takes a long winding path</p>
+        </div>
+        <div class="wide-card">
+          <h4 style="color:#E0E7FF;">↗️ Tangential</h4>
+          <p>Never reaches the original point; goes off on topics triggered by internal/external stimuli; words are understandable</p>
+        </div>
+        <div class="wide-card">
+          <h4 style="color:#FBBF24;">🚀 Flight of Ideas</h4>
+          <p>Rapid, near-continuous speech with abrupt topic changes based on understandable word associations; listener can usually follow the links; seen with pressured speech in <em>mania</em></p>
+        </div>
+      </div>
+      <div>
+        <div class="wide-card">
+          <h4 style="color:#F87171;">🌪️ Loose Associations</h4>
+          <p>Connection between ideas is unclear or nonsensical; listener cannot follow topic changes; substantially impairs communication. Classic in <em>schizophrenia</em></p>
+          <ul style="margin-top:.4rem;">
+            <li><em>Fragmentation:</em> phrases intact but disconnected — meaningless sentences</li>
+            <li><em>Word salad:</em> words intact but all sentence structure lost</li>
+            <li><em>Incoherence:</em> unintelligible words; no phrases or structure</li>
+          </ul>
+        </div>
+        <div class="sub-h" style="color:#A5B4FC;">Rate & Flow Abnormalities</div>
+        <div class="wide-card">
+          <ul>
+            <li><em>Racing thoughts:</em> too fast to articulate — "like 3 TVs at once"</li>
+            <li><em>Perseveration:</em> repeating same verbal responses despite new questions</li>
+            <li><em>Thought blocking:</em> abrupt interruption before idea completes; then resumes</li>
+            <li><em>Derailment:</em> speech stops suddenly, restarts on unrelated topic</li>
+          </ul>
+        </div>
+        <div class="callout" style="background:#4F46E518;border-left:3px solid #4F46E5;">
+          <span class="callout-icon">📋</span>
+          <span><em>Document proportionally:</em> "Thought process mostly logical and sequential, with ~25% tangentiality" is more useful than a binary label.</span>
+        </div>
+      </div>
+    </div>
+    <div class="dx-box" style="background:#4F46E512;border:1px solid #4F46E540;margin-top:.75rem;">
+      <h4 style="color:#A5B4FC;">🔬 Diagnostic Pearls — Thought Process</h4>
+      <div class="dx-grid">
+        <div class="dx-tag"><span class="dx-label" style="color:#A5B4FC;">Schizophrenia</span><span class="dx-detail">Derailment, loose associations, fragmentation, word salad (if severe)</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#A5B4FC;">Mania</span><span class="dx-detail">Racing thoughts + flight of ideas</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#A5B4FC;">Delirium</span><span class="dx-detail">Any disorder of thought process</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#A5B4FC;">Dementia</span><span class="dx-detail">Errors in word choice and grammar</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     SECTION 7 · THOUGHT CONTENT
+════════════════════════════════════════════════ -->
+<section id="s7" class="mse-section s7">
+  <div class="section-header">
+    <div class="section-num" style="background:#DC2626;">7</div>
+    <div class="section-title-block">
+      <div class="section-title" style="color:#FCA5A5;">Thought Content</div>
+      <div class="section-subtitle">What the patient is thinking — 6 critical domains to assess</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="grid-2">
+      <!-- SI -->
+      <div class="card" style="border-color:#DC262650;">
+        <h4 style="color:#FCA5A5;">🚨 A. Suicidal Ideation</h4>
+        <div class="affect-row"><span class="affect-label" style="color:#FDA4AF;font-size:12px;">Thoughts of Death</span><span class="affect-desc">Contemplates implications; thinks about funeral; passive musing</span></div>
+        <div class="affect-row"><span class="affect-label" style="color:#F87171;font-size:12px;">Passive SI</span><span class="affect-desc">"Wishes to go to sleep and not wake up" — no intent to act</span></div>
+        <div class="affect-row"><span class="affect-label" style="color:#EF4444;font-size:12px;">Active SI</span><span class="affect-desc">Wants to die now; with or without specific plan (plan details → HPI)</span></div>
+      </div>
+      <!-- HI -->
+      <div class="card" style="border-color:#DC262650;">
+        <h4 style="color:#FCA5A5;">⚠️ B. Homicidal Ideation</h4>
+        <div class="affect-row"><span class="affect-label" style="color:#FDA4AF;font-size:12px;">Thoughts</span><span class="affect-desc">Thinks about killing/hurting another; considers implications</span></div>
+        <div class="affect-row"><span class="affect-label" style="color:#EF4444;font-size:12px;">Active HI</span><span class="affect-desc">Wants to kill a specific person now; plan details documented in HPI</span></div>
+      </div>
+      <!-- Delusions -->
+      <div class="card" style="border-color:#DC262650;grid-column:span 2;">
+        <h4 style="color:#FCA5A5;">🧠 C. Delusions — False fixed beliefs held despite contradicting evidence</h4>
+        <div class="grid-auto" style="margin-top:.5rem;">
+          <div style="background:rgba(220,38,38,0.12);border-radius:8px;padding:.6rem .8rem;">
+            <div style="font-weight:700;color:#FCA5A5;font-size:12.5px;margin-bottom:3px;">Persecutory/Paranoid</div>
+            <div style="font-size:12px;color:var(--text2);">Being attacked, harassed, conspired against — <em>most common</em></div>
+          </div>
+          <div style="background:rgba(220,38,38,0.12);border-radius:8px;padding:.6rem .8rem;">
+            <div style="font-weight:700;color:#FCA5A5;font-size:12.5px;margin-bottom:3px;">Referential</div>
+            <div style="font-size:12px;color:var(--text2);">Random events have special personal significance ("the Cubs losing is a signal for me")</div>
+          </div>
+          <div style="background:rgba(220,38,38,0.12);border-radius:8px;padding:.6rem .8rem;">
+            <div style="font-weight:700;color:#FCA5A5;font-size:12.5px;margin-bottom:3px;">Grandiose</div>
+            <div style="font-size:12px;color:var(--text2);">Inflated worth, power, special relationship to deity or celebrity</div>
+          </div>
+          <div style="background:rgba(220,38,38,0.12);border-radius:8px;padding:.6rem .8rem;">
+            <div style="font-weight:700;color:#FCA5A5;font-size:12.5px;margin-bottom:3px;">Jealousy</div>
+            <div style="font-size:12px;color:var(--text2);">Sexual partner is being unfaithful</div>
+          </div>
+          <div style="background:rgba(220,38,38,0.12);border-radius:8px;padding:.6rem .8rem;">
+            <div style="font-weight:700;color:#FCA5A5;font-size:12.5px;margin-bottom:3px;">Erotomanic</div>
+            <div style="font-size:12px;color:var(--text2);">A higher-status person is in love with the patient</div>
+          </div>
+          <div style="background:rgba(220,38,38,0.12);border-radius:8px;padding:.6rem .8rem;">
+            <div style="font-weight:700;color:#FCA5A5;font-size:12.5px;margin-bottom:3px;">Somatic</div>
+            <div style="font-size:12px;color:var(--text2);">False beliefs involving bodily functions or sensations</div>
+          </div>
+        </div>
+        <div class="callout" style="background:rgba(220,38,38,0.1);border-left:3px solid #DC2626;margin-top:.75rem;">
+          <span class="callout-icon">🔴</span>
+          <span><em>Bizarre delusions</em> = physically impossible by cultural standards: <em>Thought withdrawal</em> (others stealing thoughts) · <em>Thought insertion</em> (foreign thoughts implanted) · <em>Thought broadcasting</em> (others can hear thoughts) · <em>Delusion of control</em> (external force controls actions)</span>
+        </div>
+      </div>
+      <!-- Hallucinations -->
+      <div class="card" style="border-color:#DC262650;">
+        <h4 style="color:#FCA5A5;">👁️ D. Hallucinations</h4>
+        <div class="affect-row"><span class="affect-label" style="color:#FCA5A5;font-size:11.5px;">Auditory</span><span class="affect-desc">Must be in clear sensorium — command AH (can patient resist?)</span></div>
+        <div class="affect-row"><span class="affect-label" style="color:#FCA5A5;font-size:11.5px;">Visual</span><span class="affect-desc">False visual perceptions — common in delirium, substance states</span></div>
+        <div class="affect-row"><span class="affect-label" style="color:#FCA5A5;font-size:11.5px;">Tactile</span><span class="affect-desc">Formication: bugs crawling under skin (cocaine intoxication)</span></div>
+        <div class="affect-row"><span class="affect-label" style="color:#FCA5A5;font-size:11.5px;">Olfactory</span><span class="affect-desc">False smell perceptions</span></div>
+        <div class="affect-row"><span class="affect-label" style="color:#FCA5A5;font-size:11.5px;">Gustatory</span><span class="affect-desc">False taste perceptions</span></div>
+        <div class="affect-row" style="border-bottom:none;"><span class="affect-label" style="color:#94A3B8;font-size:11.5px;">Hypna/pompic</span><span class="affect-desc">While falling asleep (hypnagogic) or waking (hypnopompic) — NOT abnormal</span></div>
+        <div class="mnemonic" style="border-color:#DC2626;margin-top:.5rem;font-size:12.5px;">
+          <strong>Mnemonic:</strong> Hypnago<em>g</em>ic = <em>g</em>oing to sleep · Hypnopo<em>m</em>pic = <em>m</em>orning wakeup
+        </div>
+      </div>
+      <!-- OCD + Derealization -->
+      <div>
+        <div class="card" style="border-color:#DC262650;margin-bottom:.75rem;">
+          <h4 style="color:#FCA5A5;">🔁 E. Obsessions & Compulsions</h4>
+          <p><em>Obsessions:</em> intrusive, ego-dystonic thoughts causing distress (contamination, doubt, harm, sexual imagery)</p>
+          <p style="margin-top:.4rem;"><em>Compulsions:</em> repetitive behaviors or mental acts aimed at reducing obsession-driven anxiety (washing, checking, counting)</p>
+        </div>
+        <div class="card" style="border-color:#DC262650;">
+          <h4 style="color:#FCA5A5;">🌫️ F. Derealization & Depersonalization</h4>
+          <p><em>Derealization:</em> surroundings feel unreal, dreamlike, foggy, visually distorted</p>
+          <p style="margin-top:.4rem;"><em>Depersonalization:</em> detachment from one's own body/mind — "watching myself from outside"</p>
+          <p style="margin-top:.4rem;color:var(--text2);font-size:12px;">These typically co-occur and may represent different facets of the same dissociative phenomenon. Common in PTSD.</p>
+        </div>
+      </div>
+    </div>
+    <div class="dx-box" style="background:#DC262612;border:1px solid #DC262640;margin-top:1rem;">
+      <h4 style="color:#FCA5A5;">🔬 Diagnostic Pearls — Thought Content</h4>
+      <div class="dx-grid">
+        <div class="dx-tag"><span class="dx-label" style="color:#FCA5A5;">Schizophrenia</span><span class="dx-detail">Bizarre delusions, AH (often command), thought insertion/broadcasting</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#FCA5A5;">OCD</span><span class="dx-detail">Ego-dystonic obsessions + compulsions</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#FCA5A5;">PTSD</span><span class="dx-detail">Flashbacks, derealization, depersonalization</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#FCA5A5;">Cocaine intox</span><span class="dx-detail">Formication (tactile hallucinations — "coke bugs")</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#FCA5A5;">ETOH withdrawal</span><span class="dx-detail">Hallucinosis (knows they're not real = insight intact)</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#FCA5A5;">Delusional Disorder</span><span class="dx-detail">Non-bizarre delusions without other psychotic symptoms</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     SECTION 8 · COGNITION
+════════════════════════════════════════════════ -->
+<section id="s8" class="mse-section s8">
+  <div class="section-header">
+    <div class="section-num" style="background:#059669;">8</div>
+    <div class="section-title-block">
+      <div class="section-title" style="color:#6EE7B7;">Cognition</div>
+      <div class="section-subtitle">Orientation · Level of consciousness · Attention · Memory · Abstract thinking · Fund of knowledge</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="grid-2">
+      <div>
+        <div class="sub-h" style="color:#6EE7B7;">🧭 Oriented × 4</div>
+        <div class="cog-item"><div class="cog-dot" style="background:#059669;"></div><div><strong style="color:#6EE7B7;">Person</strong> — Does the patient know who they are and who is around them? (Only absent in most severe cases)</div></div>
+        <div class="cog-item"><div class="cog-dot" style="background:#10B981;"></div><div><strong style="color:#6EE7B7;">Place</strong> — Does the patient know where they are AND behave accordingly?</div></div>
+        <div class="cog-item"><div class="cog-dot" style="background:#34D399;"></div><div><strong style="color:#6EE7B7;">Time</strong> — Approximate date and time of day; does behavior match?</div></div>
+        <div class="cog-item"><div class="cog-dot" style="background:#6EE7B7;"></div><div><strong style="color:#6EE7B7;">Situation</strong> — Oriented to the purpose of the interview; overlaps with insight</div></div>
+
+        <div class="sub-h" style="color:#6EE7B7;margin-top:1.2rem;">💡 Level of Consciousness</div>
+        <div class="grid-auto">
+          <div style="background:rgba(5,150,105,0.12);border-radius:8px;padding:.5rem .7rem;">
+            <div style="font-weight:700;color:#6EE7B7;font-size:12px;">Alert</div>
+            <div style="font-size:11.5px;color:var(--text2);">Fully awake, responsive</div>
+          </div>
+          <div style="background:rgba(5,150,105,0.12);border-radius:8px;padding:.5rem .7rem;">
+            <div style="font-weight:700;color:#6EE7B7;font-size:12px;">Clouding</div>
+            <div style="font-size:11.5px;color:var(--text2);">Impaired environmental awareness</div>
+          </div>
+          <div style="background:rgba(5,150,105,0.12);border-radius:8px;padding:.5rem .7rem;">
+            <div style="font-weight:700;color:#6EE7B7;font-size:12px;">Somnolent</div>
+            <div style="font-size:11.5px;color:var(--text2);">Drowsy, delayed/incomplete responses</div>
+          </div>
+          <div style="background:rgba(5,150,105,0.12);border-radius:8px;padding:.5rem .7rem;">
+            <div style="font-weight:700;color:#6EE7B7;font-size:12px;">Stupor</div>
+            <div style="font-size:11.5px;color:var(--text2);">Vigorous, repeated stimulation required</div>
+          </div>
+          <div style="background:rgba(5,150,105,0.12);border-radius:8px;padding:.5rem .7rem;">
+            <div style="font-weight:700;color:#6EE7B7;font-size:12px;">Coma</div>
+            <div style="font-size:11.5px;color:var(--text2);">No verbal or motor response to noxious stimuli</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="sub-h" style="color:#6EE7B7;">🧩 Cognitive Domains</div>
+        <div class="wide-card" style="margin-bottom:.6rem;">
+          <h4 style="color:#6EE7B7;">Concentration & Attention</h4>
+          <p>Serial 7s (100–7–7…) · Spell WORLD / EARTH forwards then backwards</p>
+        </div>
+        <div class="wide-card" style="margin-bottom:.6rem;">
+          <h4 style="color:#6EE7B7;">Memory</h4>
+          <ul>
+            <li><em>Recent:</em> recall news events from past months</li>
+            <li><em>Remote:</em> childhood data, personal history (verify!)</li>
+            <li><em>Recall:</em> 3 unrelated words after 3–5 min (e.g., apple · honesty · star)</li>
+          </ul>
+        </div>
+        <div class="wide-card" style="margin-bottom:.6rem;">
+          <h4 style="color:#6EE7B7;">Abstract Thinking</h4>
+          <p>Proverb interpretation ("a rolling stone gathers no moss") · Similarities & differences ("how are a bush and a tree alike?") · <em>Concrete</em> = takes everything literally</p>
+        </div>
+        <div class="wide-card">
+          <h4 style="color:#6EE7B7;">Formal Cognitive Screens</h4>
+          <p>MMSE (Folstein) — 30 points · SLUMS · MoCA — all validated for bedside use</p>
+        </div>
+      </div>
+    </div>
+    <div class="dx-box" style="background:#05966912;border:1px solid #05966940;margin-top:1rem;">
+      <h4 style="color:#6EE7B7;">🔬 Diagnostic Pearls — Cognition</h4>
+      <div class="dx-grid">
+        <div class="dx-tag"><span class="dx-label" style="color:#6EE7B7;">Delirium</span><span class="dx-detail">Disoriented to time/place/situation (rarely person); poor concentration; serial MMSE testing</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#6EE7B7;">Dementia</span><span class="dx-detail">Memory impairment, poor abstraction, apraxia, agnosia</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#6EE7B7;">MDD</span><span class="dx-detail">Poor concentration, indecisive — can mimic dementia ("pseudodementia")</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#6EE7B7;">Mania</span><span class="dx-detail">Distractible, poor concentration despite high energy</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#6EE7B7;">Korsakoff</span><span class="dx-detail">Anterograde amnesia — poor/variable short-term memory; confabulation</span></div>
+        <div class="dx-tag"><span class="dx-label" style="color:#6EE7B7;">Substance intox</span><span class="dx-detail">Decreased alertness, disoriented, poor concentration</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     SECTION 9 · JUDGMENT
+════════════════════════════════════════════════ -->
+<section id="s9" class="mse-section s9">
+  <div class="section-header">
+    <div class="section-num" style="background:#EA580C;">9</div>
+    <div class="section-title-block">
+      <div class="section-title" style="color:#FDBA74;">Judgment</div>
+      <div class="section-subtitle">Current/recent ability to assess situations correctly and act appropriately within reality</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="callout" style="background:#EA580C18;border-left:3px solid #EA580C;">
+      <span class="callout-icon">⚖️</span>
+      <span>Judgment examines <em>recent decisions and choices</em>, not hypothetical problem-solving. Asking about real behavior ("What did you do when…?") is more clinically relevant than the theater-fire hypothetical.</span>
+    </div>
+    <div class="grid-2" style="margin-top:1rem;">
+      <div class="card" style="border-color:#EA580C50;">
+        <h4 style="color:#FDBA74;">What to Assess</h4>
+        <ul>
+          <li>Recent choices that led to current presentation</li>
+          <li>Ability to make plans consistent with reality</li>
+          <li>Response to hypothetical scenarios (less preferred)</li>
+          <li>Awareness of consequences of behavior</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:#EA580C50;">
+        <h4 style="color:#FDBA74;">Rating Scale</h4>
+        <div class="affect-row"><span class="affect-label" style="color:#34D399;font-size:13px;">Good / Intact</span><span class="affect-desc">Decisions appropriate; acts within social/safety norms</span></div>
+        <div class="affect-row"><span class="affect-label" style="color:#FBBF24;font-size:13px;">Fair / Partial</span><span class="affect-desc">Some appropriate decisions; inconsistent; limited follow-through</span></div>
+        <div class="affect-row" style="border-bottom:none;"><span class="affect-label" style="color:#EF4444;font-size:13px;">Poor / Impaired</span><span class="affect-desc">Decisions clearly inconsistent with reality or safety norms</span></div>
+      </div>
+    </div>
+    <div class="mnemonic" style="border-color:#EA580C;margin-top:1rem;">
+      <strong>⚠️ Critical point:</strong> A patient who attempted suicide 3 hours ago and is now denying SI — judgment cannot be described as "good" in isolation. Always contextualize with <em>recent</em> behavior. Document: "Judgment currently appears intact; however, patient demonstrated poor judgment as evidenced by suicide attempt earlier today."
+    </div>
+    <div class="grid-3" style="margin-top:1rem;">
+      <div class="card" style="border-color:#EA580C40;">
+        <h4 style="color:#FDBA74;">📌 Poor Judgment Examples</h4>
+        <ul>
+          <li>Acquiring weapon to self-harm</li>
+          <li>Acting on delusions (calling exterminator for formication)</li>
+          <li>Spending thousands during manic episode</li>
+          <li>Stopping medications without discussing</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:#EA580C40;grid-column:span 2;">
+        <h4 style="color:#FDBA74;">✍️ Documentation Examples</h4>
+        <ul>
+          <li>"Judgment: <em>Poor</em> — patient actively delusional, planning to harm identified individual"</li>
+          <li>"Judgment: <em>Fair/Poor</em> — currently denies delusions but was actively delusional and acting on beliefs as recently as yesterday"</li>
+          <li>"Judgment: <em>Fair</em> — patient acknowledges need for treatment but has not followed through with medication adherence"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     SECTION 10 · INSIGHT
+════════════════════════════════════════════════ -->
+<section id="s10" class="mse-section s10">
+  <div class="section-header">
+    <div class="section-num" style="background:#9333EA;">10</div>
+    <div class="section-title-block">
+      <div class="section-title" style="color:#D8B4FE;">Insight</div>
+      <div class="section-subtitle">To what degree does the patient understand that they are ill — and can act on that understanding?</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="sub-h" style="color:#D8B4FE;">Insight Spectrum</div>
+    <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem;">
+      <div style="display:flex;align-items:flex-start;gap:1rem;">
+        <div style="min-width:110px;background:#7F1D1D;border-radius:8px;padding:.4rem .7rem;text-align:center;">
+          <div style="font-size:10.5px;font-weight:700;color:#FCA5A5;">POOR</div>
+          <div style="font-size:20px;margin-top:2px;">🚫</div>
+        </div>
+        <div style="flex:1;">
+          <div class="affect-row"><span class="affect-label" style="color:#FCA5A5;font-size:12px;">Complete Denial</span><span class="affect-desc">Refuses to acknowledge illness; blames others, external factors, or organic causes for symptoms</span></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:1rem;">
+        <div style="min-width:110px;background:#78350F;border-radius:8px;padding:.4rem .7rem;text-align:center;">
+          <div style="font-size:10.5px;font-weight:700;color:#FCD34D;">PARTIAL</div>
+          <div style="font-size:20px;margin-top:2px;">🌗</div>
+        </div>
+        <div style="flex:1;">
+          <div class="affect-row"><span class="affect-label" style="color:#FCD34D;font-size:12px;">Partial Awareness</span><span class="affect-desc">Acknowledges something is wrong but simultaneously denies it; ambivalent about needing help</span></div>
+          <div class="affect-row" style="border-bottom:none;"><span class="affect-label" style="color:#FCD34D;font-size:12px;">Intellectual Insight</span><span class="affect-desc">Understands cognitively that they are ill but cannot apply this awareness to make behavioral changes</span></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:1rem;">
+        <div style="min-width:110px;background:#064E3B;border-radius:8px;padding:.4rem .7rem;text-align:center;">
+          <div style="font-size:10.5px;font-weight:700;color:#6EE7B7;">GOOD / FULL</div>
+          <div style="font-size:20px;margin-top:2px;">✅</div>
+        </div>
+        <div style="flex:1;">
+          <div class="affect-row" style="border-bottom:none;"><span class="affect-label" style="color:#6EE7B7;font-size:12px;">True Insight</span><span class="affect-desc">Understands objective reality of situation + has motivation and emotional impetus to make useful behavioral changes; working with treatment team</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card" style="border-color:#9333EA50;">
+        <h4 style="color:#D8B4FE;">✍️ Documentation Examples</h4>
+        <ul>
+          <li>"Insight: <em>Poor</em> — pt stopped medications, now actively manic, refusing treatment"</li>
+          <li>"Insight: <em>Fair</em> — pt acknowledges depression and SI but declines treatment ('just doesn't want it')"</li>
+          <li>"Insight: <em>Fair</em> — pt agrees to help after involuntary admission last night"</li>
+          <li>"Insight: <em>Good</em> — pt demonstrates clear understanding of illness and is actively engaged in treatment planning"</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:#9333EA50;">
+        <h4 style="color:#D8B4FE;">🔑 Key Principle</h4>
+        <p style="margin-bottom:.5rem;">In psychiatry, the <em>default</em> is that Judgment and Insight are intact. You are assessing for <em>evidence of impairment</em>, not trying to prove them good.</p>
+        <p>A single area of impaired judgment (e.g., actively suicidal) can have dire consequences — document thoroughly even when overall functioning appears intact.</p>
+        <div class="callout" style="background:#9333EA18;border-left:3px solid #9333EA;margin-top:.6rem;">
+          <span class="callout-icon">📌</span>
+          <span>Always consider <em>both current and recent</em> events when rating Judgment and Insight — the two are closely related and should be assessed together.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     QUICK REFERENCE SUMMARY
+════════════════════════════════════════════════ -->
+<section style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:1.8rem;margin-bottom:2.5rem;">
+  <div style="font-family:var(--font-head);font-size:1.2rem;font-weight:700;color:#E2E8F0;margin-bottom:1rem;text-align:center;letter-spacing:-.02em;">
+    ⚡ PMHNP Quick-Reference: MSE at a Glance
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.5rem;">
+    <div style="background:var(--surface2);border-radius:10px;padding:.7rem .9rem;border-left:3px solid #0F766E;">
+      <div style="font-size:10.5px;font-weight:700;color:#5EEAD4;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;">1 · Appearance</div>
+      <div style="font-size:12px;color:var(--text2);">Photo = appearance. Groom · hygiene · clothing · body type</div>
+    </div>
+    <div style="background:var(--surface2);border-radius:10px;padding:.7rem .9rem;border-left:3px solid #2563EB;">
+      <div style="font-size:10.5px;font-weight:700;color:#93C5FD;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;">2 · Behavior</div>
+      <div style="font-size:12px;color:var(--text2);">Movie = behavior. Psychomotor + attitude toward interviewer</div>
+    </div>
+    <div style="background:var(--surface2);border-radius:10px;padding:.7rem .9rem;border-left:3px solid #7C3AED;">
+      <div style="font-size:10.5px;font-weight:700;color:#C4B5FD;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;">3 · Mood</div>
+      <div style="font-size:12px;color:var(--text2);">Subjective climate. Quote patient's own words.</div>
+    </div>
+    <div style="background:var(--surface2);border-radius:10px;padding:.7rem .9rem;border-left:3px solid #DB2777;">
+      <div style="font-size:10.5px;font-weight:700;color:#F9A8D4;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;">4 · Affect</div>
+      <div style="font-size:12px;color:var(--text2);">State · Range · Appropriateness · Congruence</div>
+    </div>
+    <div style="background:var(--surface2);border-radius:10px;padding:.7rem .9rem;border-left:3px solid #D97706;">
+      <div style="font-size:10.5px;font-weight:700;color:#FCD34D;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;">5 · Speech</div>
+      <div style="font-size:12px;color:var(--text2);">Clarity · Rate · Quantity · Tone · Flow · Volume</div>
+    </div>
+    <div style="background:var(--surface2);border-radius:10px;padding:.7rem .9rem;border-left:3px solid #4F46E5;">
+      <div style="font-size:10.5px;font-weight:700;color:#A5B4FC;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;">6 · Thought Process</div>
+      <div style="font-size:12px;color:var(--text2);">HOW thoughts connect — goal-directed → word salad</div>
+    </div>
+    <div style="background:var(--surface2);border-radius:10px;padding:.7rem .9rem;border-left:3px solid #DC2626;">
+      <div style="font-size:10.5px;font-weight:700;color:#FCA5A5;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;">7 · Thought Content</div>
+      <div style="font-size:12px;color:var(--text2);">WHAT they think — SI · HI · delusions · AH · OCD · derealization</div>
+    </div>
+    <div style="background:var(--surface2);border-radius:10px;padding:.7rem .9rem;border-left:3px solid #059669;">
+      <div style="font-size:10.5px;font-weight:700;color:#6EE7B7;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;">8 · Cognition</div>
+      <div style="font-size:12px;color:var(--text2);">Oriented ×4 · LOC · Attention · Memory · Abstraction</div>
+    </div>
+    <div style="background:var(--surface2);border-radius:10px;padding:.7rem .9rem;border-left:3px solid #EA580C;">
+      <div style="font-size:10.5px;font-weight:700;color:#FDBA74;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;">9 · Judgment</div>
+      <div style="font-size:12px;color:var(--text2);">Recent decisions ÷ reality — Good / Fair / Poor + context</div>
+    </div>
+    <div style="background:var(--surface2);border-radius:10px;padding:.7rem .9rem;border-left:3px solid #9333EA;">
+      <div style="font-size:10.5px;font-weight:700;color:#D8B4FE;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;">10 · Insight</div>
+      <div style="font-size:12px;color:var(--text2);">Degree of illness awareness + ability to act on it</div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  <div style="font-family:var(--font-head);font-size:13px;color:var(--text);margin-bottom:.3rem;">Mental Status Exam · PMHNP Visual Reference</div>
+  <div>NURS 632 · George Mason University School of Nursing · Based on MSE clinical reference (02/09/22)</div>
+  <div style="margin-top:.4rem;color:#475569;">For educational use. Not a substitute for clinical judgment or DSM-5-TR criteria.</div>
+</footer>
+
+</body>
+</html>

@@ -694,6 +694,23 @@
     .match-grid { grid-template-columns: 1fr; }
     .top-bar    { flex-direction: column; align-items: flex-start; }
   }
+
+  /* ─── CERTIFICATE BUTTON ─── */
+  .cert-btn {
+    background: transparent;
+    border: 1px solid var(--accent2);
+    color: var(--accent2);
+    border-radius: 8px;
+    padding: 14px 32px;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cert-btn:hover { background: rgba(74,124,111,0.08); }
 </style>
 </head>
 <body>
@@ -1456,13 +1473,157 @@ function showCompletion() {
         <div class="takeaway-item"><span class="ti-icon">🛠️</span><span>All assignments must be submitted through <strong>Canvas</strong> (Harmonize or the Assignment feature). Turnitin checks for plagiarism but is not a submission portal. Always verify your submission posted. For technical issues, contact <strong>GMU ITS</strong> and document before the deadline.</span></div>
       </div>
 
-      <button class="btn" onclick="restartEscape()">RESTART ORIENTATION</button>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px;">
+        <button class="btn" onclick="restartEscape()">RESTART ORIENTATION</button>
+        <button class="cert-btn" onclick="downloadCertificate('${name}','${displayScore}','${pct}','${time}')">🎓 DOWNLOAD CERTIFICATE</button>
+      </div>
     </div>
   `;
 
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('app').appendChild(div);
   document.getElementById('app').scrollTop = 0;
+}
+
+function downloadCertificate(name, scoreVal, pctVal, timeVal) {
+  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  const certHTML = `
+    <html><head>
+    <meta charset="UTF-8">
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        width: 1100px; height: 780px;
+        display: flex; align-items: center; justify-content: center;
+        background: #fff;
+        font-family: 'DM Sans', sans-serif;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .cert {
+        width: 1060px; height: 740px;
+        border: 3px solid #4a7c6f;
+        border-radius: 6px;
+        position: relative;
+        padding: 50px 60px;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: space-between;
+        background: #fff;
+        overflow: hidden;
+      }
+      .cert::before, .cert::after {
+        content: '';
+        position: absolute;
+        width: 60px; height: 60px;
+        border-color: #b5541e;
+        border-style: solid;
+      }
+      .cert::before { top: 12px; left: 12px; border-width: 3px 0 0 3px; }
+      .cert::after  { bottom: 12px; right: 12px; border-width: 0 3px 3px 0; }
+      .corner-br { position: absolute; bottom: 12px; left: 12px; width: 60px; height: 60px; border: 3px solid #b5541e; border-width: 0 0 3px 3px; }
+      .corner-tr { position: absolute; top: 12px; right: 12px; width: 60px; height: 60px; border: 3px solid #b5541e; border-width: 3px 3px 0 0; }
+      .watermark {
+        position: absolute;
+        font-size: 180px;
+        color: rgba(74,124,111,0.04);
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        letter-spacing: -8px;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%) rotate(-15deg);
+        white-space: nowrap;
+        pointer-events: none;
+        user-select: none;
+      }
+      .top-section { text-align: center; }
+      .institution { font-size: 11px; font-weight: 500; letter-spacing: 5px; text-transform: uppercase; color: #4a7c6f; margin-bottom: 6px; }
+      .program { font-size: 10px; letter-spacing: 3px; color: #8a7560; text-transform: uppercase; margin-bottom: 20px; }
+      .cert-rule { width: 80px; height: 2px; background: #b5541e; margin: 0 auto 20px; }
+      .presents { font-size: 13px; color: #8a7560; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+      .cert-title { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; color: #2c2017; line-height: 1.15; margin-bottom: 8px; }
+      .middle-section { text-align: center; }
+      .student-name { font-family: 'Playfair Display', serif; font-size: 46px; font-style: italic; color: #b5541e; line-height: 1.1; margin-bottom: 18px; }
+      .completion-text { font-size: 13px; color: #2c2017; max-width: 640px; line-height: 1.75; margin: 0 auto; }
+      .completion-text strong { color: #0a0e14; }
+      .score-row { display: flex; gap: 40px; justify-content: center; margin-top: 18px; }
+      .score-item { text-align: center; }
+      .score-item .sv { font-family: 'Playfair Display', serif; font-size: 26px; color: #4a7c6f; display: block; }
+      .score-item .sl { font-size: 9px; letter-spacing: 2px; color: #8a7560; text-transform: uppercase; margin-top: 2px; }
+      .bottom-section { width: 100%; display: flex; justify-content: space-between; align-items: flex-end; }
+      .sig-block { text-align: center; }
+      .sig-line { width: 180px; height: 1px; background: #4a7c6f; margin: 0 auto 6px; }
+      .sig-name { font-size: 12px; font-weight: 500; color: #2c2017; }
+      .sig-title { font-size: 10px; color: #8a7560; margin-top: 2px; }
+      .seal { width: 90px; height: 90px; border: 3px solid #b5541e; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; }
+      .seal::before { content: ''; position: absolute; inset: 4px; border: 1px dashed #b5541e; border-radius: 50%; }
+      .seal-text { font-size: 8px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: #b5541e; line-height: 1.4; }
+      .seal-icon { font-size: 20px; margin-bottom: 2px; }
+      .date-block { text-align: center; }
+      .date-val { font-family: 'Playfair Display', serif; font-size: 15px; color: #2c2017; }
+      .date-lbl { font-size: 10px; letter-spacing: 2px; color: #8a7560; text-transform: uppercase; margin-top: 4px; }
+      @media print {
+        @page { size: landscape; margin: 0; }
+        body { width: 100vw; height: 100vh; }
+        .cert { width: 96vw; height: 92vh; }
+      }
+    </style>
+    </head><body>
+    <div class="cert">
+      <div class="corner-br"></div>
+      <div class="corner-tr"></div>
+      <div class="watermark">NURS 632</div>
+
+      <div class="top-section">
+        <div class="institution">George Mason University · School of Nursing</div>
+        <div class="program">PMHNP Program &nbsp;·&nbsp; NURS 632: Pathogenesis of Mental Disorders</div>
+        <div class="cert-rule"></div>
+        <div class="presents">This certifies that</div>
+      </div>
+
+      <div class="middle-section">
+        <div class="student-name">${name}</div>
+        <div class="completion-text">
+          has successfully completed the <strong>NURS 632 Course Orientation Escape Room</strong><br>
+          demonstrating knowledge of course policies, faculty contact procedures, grading requirements,<br>
+          Canvas navigation, PMHNP competency domains, and the disorders covered in<br>
+          <strong>Pathogenesis of Mental Disorders</strong>.
+        </div>
+        <div class="score-row">
+          <div class="score-item"><span class="sv">${scoreVal}/100</span><div class="sl">Final Score</div></div>
+          <div class="score-item"><span class="sv">${pctVal}%</span><div class="sl">Accuracy</div></div>
+          <div class="score-item"><span class="sv">4 / 4</span><div class="sl">Rooms Completed</div></div>
+        </div>
+      </div>
+
+      <div class="bottom-section">
+        <div class="sig-block">
+          <div class="sig-line"></div>
+          <div class="sig-name">K. Pierre Eklou, DNP, APRN, PMHNP-BC, ACTTP</div>
+          <div class="sig-title">Associate Professor · School of Nursing · George Mason University</div>
+        </div>
+        <div class="seal">
+          <div class="seal-icon">🎓</div>
+          <div class="seal-text">Orientation<br>Complete</div>
+        </div>
+        <div class="date-block">
+          <div class="date-val">${today}</div>
+          <div class="date-lbl">Date of Completion</div>
+        </div>
+      </div>
+    </div>
+    </body></html>
+  `;
+
+  const win = window.open('', '_blank', 'width=1120,height=820');
+  if (!win) {
+    alert('Please allow pop-ups for this page to download your certificate.');
+    return;
+  }
+  win.document.write(certHTML);
+  win.document.close();
+  win.onload = () => { win.focus(); win.print(); };
 }
 </script>
 </body>

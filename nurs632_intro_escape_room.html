@@ -741,6 +741,8 @@
   </div>
 
   <button class="btn" onclick="validateAndStart()">BEGIN ORIENTATION ⟶</button>
+  <br>
+  <button class="fs-btn-intro" onclick="toggleFullscreen()" id="fs-btn-intro">⛶ &nbsp;Enter Fullscreen</button>
 </div>
 
 <!-- ══════════════ ROOM SHELL ══════════════ -->
@@ -750,6 +752,7 @@
     <div class="student-tag">Student: <span id="top-student-name">—</span></div>
     <div class="progress-track" id="progress-dots"></div>
     <div class="timer-display" id="timer-display">00:00</div>
+    <button class="fs-btn" onclick="toggleFullscreen()" id="fs-btn-room">⛶ Fullscreen</button>
   </div>
 
   <div class="room-content" id="room-content"></div>
@@ -1293,7 +1296,9 @@ function submitMulti(roomIdx, qi) {
     document.getElementById(`submit-multi-${qi}`).disabled = true;
   } else {
     opts.forEach(o => o.classList.add('disabled'));
-    selected.forEach(si => { if (!correctSet.has(si)) opts[si].classList.add('incorrect'); });
+    // Flag the whole selection uniformly — do NOT single out which specific
+    // choices were wrong, as that would leak the answer on select-all items.
+    selected.forEach(si => opts[si].classList.add('incorrect'));
     showFeedback(qi, false, q.fb_wrong);
     setTimeout(() => {
       opts.forEach(o => { o.classList.remove('disabled','selected','incorrect','correct'); });
@@ -1306,9 +1311,11 @@ function submitMulti(roomIdx, qi) {
 function showFeedback(qi, correct, msg, pts) {
   const fb = document.getElementById(`fb-${qi}`);
   fb.className = 'feedback-box show ' + (correct ? 'correct-fb' : 'wrong-fb');
+  // Rationale is revealed ONLY on a correct answer. Incorrect attempts get
+  // no hint and no explanation — the student must reason it out.
   fb.innerHTML = correct
     ? `<strong>✓ Correct${pts ? ' (+' + pts + ' pts)' : ''}</strong><p>${msg}</p>`
-    : `<strong>✗ Not quite — try again</strong><p>${msg}</p>`;
+    : `<strong>✗ Not quite — try again</strong>`;
 }
 
 function checkRoomComplete(roomIdx) {
@@ -1569,7 +1576,41 @@ function downloadCertificate(name, scoreVal, pctVal, timeVal) {
         body { width: 100vw; height: 100vh; }
         .cert { width: 96vw; height: 92vh; }
       }
-    </style>
+    
+  /* ─── FULLSCREEN BUTTON ─── */
+  .fs-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .fs-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  .fs-btn-intro {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 14px;
+  }
+  .fs-btn-intro:hover { border-color: var(--accent2); color: var(--accent2); }
+</style>
     </head><body>
     <div class="cert">
       <div class="corner-br"></div>
@@ -1627,6 +1668,40 @@ function downloadCertificate(name, scoreVal, pctVal, timeVal) {
   win.document.close();
   win.onload = () => { win.focus(); win.print(); };
 }
+
+// ════════════════════════════════════════════════
+// FULLSCREEN TOGGLE
+// Works inside a Canvas iframe as long as the embed
+// carries allowfullscreen / allow="fullscreen".
+// ════════════════════════════════════════════════
+function toggleFullscreen() {
+  const el = document.documentElement;
+  const isFs = document.fullscreenElement || document.webkitFullscreenElement;
+
+  if (!isFs) {
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+    if (req) {
+      Promise.resolve(req.call(el)).catch(() => {
+        alert('Fullscreen was blocked. You can also open the activity in its own tab for a larger view.');
+      });
+    } else {
+      alert('Your browser does not support fullscreen for embedded content.');
+    }
+  } else {
+    const exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+    if (exit) exit.call(document);
+  }
+}
+
+function syncFullscreenLabels() {
+  const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+  const room = document.getElementById('fs-btn-room');
+  const intro = document.getElementById('fs-btn-intro');
+  if (room)  room.textContent  = isFs ? '⛶ Exit Fullscreen' : '⛶ Fullscreen';
+  if (intro) intro.innerHTML   = isFs ? '⛶ &nbsp;Exit Fullscreen' : '⛶ &nbsp;Enter Fullscreen';
+}
+document.addEventListener('fullscreenchange', syncFullscreenLabels);
+document.addEventListener('webkitfullscreenchange', syncFullscreenLabels);
 </script>
 </body>
 </html>

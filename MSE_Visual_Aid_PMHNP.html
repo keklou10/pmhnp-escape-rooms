@@ -818,5 +818,44 @@ em { font-style:normal; font-weight:700; color:var(--ink); }
   <p>NURS 632 · George Mason University School of Nursing · For educational use — not a substitute for clinical judgment or DSM-5-TR criteria.</p>
 </footer>
 
+<!-- ── FLOATING EXPAND BUTTON ── -->
+<div id="expand-btn" style="
+  position:fixed; bottom:22px; right:22px; z-index:9999;
+  display:flex; flex-direction:column; align-items:flex-end; gap:8px;
+">
+  <button onclick="openFullPage()" title="Open in full screen" style="
+    background:#1E1B4B; color:#fff;
+    border:none; border-radius:12px;
+    padding:10px 16px;
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+    cursor:pointer; display:flex; align-items:center; gap:7px;
+    box-shadow:0 4px 18px rgba(30,27,75,0.45);
+    transition:transform .15s, box-shadow .15s;
+  " onmouseover="this.style.transform='scale(1.05)';this.style.boxShadow='0 6px 24px rgba(30,27,75,0.55)'"
+     onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 18px rgba(30,27,75,0.45)'">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+    </svg>
+    Open Full Screen
+  </button>
+</div>
+
+<script>
+function openFullPage() {
+  /* Try native fullscreen first (works if Canvas iframe allows it) */
+  var el = document.documentElement;
+  if (el.requestFullscreen) { el.requestFullscreen(); return; }
+  if (el.webkitRequestFullscreen) { el.webkitRequestFullscreen(); return; }
+  /* Fallback: open the same URL in a new tab */
+  window.open(window.location.href, '_blank');
+}
+
+/* Hide button if we're already in a proper full-size context (not iframed) */
+try {
+  if (window.self === window.top) {
+    document.getElementById('expand-btn').style.display = 'none';
+  }
+} catch(e) { /* cross-origin iframe — keep button visible */ }
+</script>
 </body>
 </html>

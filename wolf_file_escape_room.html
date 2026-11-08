@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The Wolf File</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<style>
+/* Layout: institutional ward signage band, then a two-column desk: the lock on the left, the case chart pinned on the right. */
+:root{
+  --bg:#EDF1EE; --surface:#FFFFFF; --sunk:#E3E9E5; --ink:#132019; --muted:#56675D; --line:#C7D2CA;
+  --green:#006633; --green-ink:#FFFFFF; --band:#0B3F26; --band-ink:#EAF3EE; --band-muted:#A8C4B3;
+  --gold:#FFCC33; --gold-ink:#2A2100; --gold-soft:#FFF4CC;
+  --ok:#1D7A46; --ok-soft:#E1F2E8; --bad:#A3302A; --bad-soft:#F8E4E2;
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1511; --surface:#15201A; --sunk:#1B2821; --ink:#E4ECE7; --muted:#93A69B; --line:#2B3B32;
+  --green:#3DAA70; --green-ink:#06140C; --band:#08221A; --band-ink:#E4ECE7; --band-muted:#8FB09E;
+  --gold:#FFCC33; --gold-ink:#2A2100; --gold-soft:#2E2810;
+  --ok:#5CC48A; --ok-soft:#14301F; --bad:#EE8278; --bad-soft:#3A1A17; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1511; --surface:#15201A; --sunk:#1B2821; --ink:#E4ECE7; --muted:#93A69B; --line:#2B3B32;
+  --green:#3DAA70; --green-ink:#06140C; --band:#08221A; --band-ink:#E4ECE7; --band-muted:#8FB09E;
+  --gold:#FFCC33; --gold-ink:#2A2100; --gold-soft:#2E2810;
+  --ok:#5CC48A; --ok-soft:#14301F; --bad:#EE8278; --bad-soft:#3A1A17; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6}
+h1,h2,h3{text-wrap:balance;margin:0}
+p{margin:0}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1180px;margin:0 auto}
+
+/* Band */
+.band{background:var(--band);color:var(--band-ink)}
+.band .wrap{padding-block:18px 14px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase}
+.band .eyebrow{color:var(--band-muted)}
+.brand h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,5vw,44px);line-height:1;letter-spacing:.01em;text-transform:uppercase}
+.brand h1 span{color:var(--gold)}
+.brand .sub{font-size:13.5px;color:var(--band-muted);margin-top:6px}
+.clock{display:flex;gap:18px;align-items:flex-end}
+.clock div{display:flex;flex-direction:column;align-items:flex-end}
+.clock b{font-family:var(--mono);font-weight:600;font-size:26px;font-variant-numeric:tabular-nums;line-height:1.1}
+.clock b.over{color:var(--gold)}
+.clock small{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--band-muted)}
+
+/* Lock strip */
+.strip{border-top:1px solid color-mix(in srgb,var(--band-ink) 14%,transparent)}
+.strip .wrap{padding-block:10px 12px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.pip{all:unset;cursor:default;display:flex;flex-direction:column;gap:4px;min-width:0}
+.pip i{display:block;height:6px;border-radius:2px;background:color-mix(in srgb,var(--band-ink) 18%,transparent)}
+.pip span{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--band-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pip.open i{background:var(--gold)}
+.pip.open span{color:var(--band-ink)}
+.pip.cur i{background:var(--band-ink)}
+.pip.cur span{color:var(--band-ink)}
+.pip.go{cursor:pointer}
+.pip.viewing span{text-decoration:underline;text-underline-offset:3px}
+.pip:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+/* Desk */
+main .wrap{padding-block:24px 40px}
+.viewtabs{display:none;gap:6px;margin-bottom:14px}
+.desk{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:24px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:6px}
+.room-head{padding:20px 24px 16px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.room-head .eyebrow{color:var(--green)}
+.room-head h2{font-family:var(--display);font-weight:600;font-size:30px;line-height:1.1}
+.room-body{padding:20px 24px 24px;display:flex;flex-direction:column;gap:20px}
+.prompt{display:flex;flex-direction:column;gap:10px;max-width:68ch}
+.part{display:flex;flex-direction:column;gap:10px}
+.part-label{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.part-sub{max-width:68ch}
+
+.bank{list-style:none;margin:0;padding:12px 14px;background:var(--sunk);border-radius:4px;display:grid;gap:6px}
+.bank li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:8px;font-size:14px}
+.bank b{font-family:var(--mono);color:var(--green)}
+
+.rows{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:28px minmax(0,1fr) minmax(170px,230px);gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.row .n{font-family:var(--mono);font-size:13px;color:var(--muted);align-self:start;padding-top:1px}
+.row.narrow{grid-template-columns:28px minmax(0,1fr) 110px}
+select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--surface);min-height:40px}
+.row.narrow select{font-family:var(--mono)}
+
+.checks{display:flex;flex-direction:column;gap:2px}
+.check{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:start;padding:10px 12px;border-radius:4px;cursor:pointer}
+.check:hover{background:var(--sunk)}
+.check input{width:18px;height:18px;margin:3px 0 0;accent-color:var(--green)}
+
+.code input{width:100%;max-width:320px;padding:10px 14px;border:1px solid var(--line);border-radius:4px;background:var(--surface);font-family:var(--mono);font-size:22px;letter-spacing:.18em;text-transform:uppercase}
+.code input::placeholder{letter-spacing:.04em;font-size:15px;color:var(--muted);text-transform:none}
+
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{border:1px solid transparent;border-radius:4px;padding:10px 18px;font-weight:600;cursor:pointer;min-height:42px}
+.btn.primary{background:var(--green);color:var(--green-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.ghost:hover{background:var(--sunk)}
+.btn.gold{background:var(--gold);color:var(--gold-ink)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.meta{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+.fb{border-radius:4px;padding:12px 14px;font-size:14px;display:flex;flex-direction:column;gap:4px}
+.fb.bad{background:var(--bad-soft);color:var(--ink);border:1px solid color-mix(in srgb,var(--bad) 40%,transparent)}
+.fb.bad strong{color:var(--bad)}
+.fb.note{background:var(--sunk)}
+.hintlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.hintlist li{background:var(--gold-soft);border:1px solid color-mix(in srgb,var(--gold) 55%,transparent);border-radius:4px;padding:10px 14px;font-size:14px}
+.hintlist li b{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;display:block}
+
+.opened{border:1px solid color-mix(in srgb,var(--gold) 70%,transparent);border-radius:6px;overflow:hidden}
+.opened .stamp{background:var(--gold);color:var(--gold-ink);font-family:var(--mono);font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:8px 16px}
+.opened .txt{padding:16px 18px;display:flex;flex-direction:column;gap:12px;max-width:72ch}
+.pearl{background:var(--ok-soft);border-radius:4px;padding:10px 14px}
+
+/* Case file */
+.case{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto}
+.case-head{padding:16px 20px;border-bottom:2px solid var(--ink);display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.case-head h2{font-family:var(--display);font-size:24px;font-weight:600;text-transform:uppercase;letter-spacing:.02em}
+.case section{padding:14px 20px;border-bottom:1px solid var(--line);font-size:14px;display:flex;flex-direction:column;gap:8px}
+.case section:last-child{border-bottom:0}
+.case h3{font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--green)}
+.case ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.case dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 12px;margin:0}
+.case dt{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:2px}
+.case dd{margin:0}
+.sealed{background:repeating-linear-gradient(-45deg,var(--sunk) 0 10px,var(--surface) 10px 20px);border:1px dashed var(--line);border-radius:4px;padding:18px;text-align:center;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tl{list-style:none;padding:0 !important;gap:10px !important}
+.tl li{display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px}
+.tl b{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:500}
+
+/* Start + finish */
+.start{max-width:760px}
+.start .room-body{gap:18px}
+.start h2{font-family:var(--display);font-weight:600;font-size:32px;line-height:1.1}
+.obj{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-weight:600}
+.field input{padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);max-width:520px}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.rules div{background:var(--sunk);border-radius:4px;padding:12px 14px;font-size:14px}
+.rules b{display:block;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:2px}
+
+.finish{display:flex;flex-direction:column;gap:24px}
+.cert{background:var(--surface);border:2px solid var(--green);outline:1px solid var(--green);outline-offset:-8px;border-radius:2px;padding:36px 32px;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center}
+.cert .eyebrow{color:var(--muted)}
+.cert h2{font-family:var(--display);font-weight:700;font-size:clamp(26px,4vw,36px);text-transform:uppercase;letter-spacing:.03em;color:var(--green)}
+.cert .who{font-family:var(--display);font-weight:600;font-size:clamp(24px,4vw,34px);border-bottom:1px solid var(--line);padding-bottom:6px;min-width:min(420px,100%)}
+.cert dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;width:100%;max-width:640px;margin:8px 0 0}
+.cert dl div{display:flex;flex-direction:column;gap:2px}
+.cert dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.cert dd{margin:0;font-family:var(--mono);font-weight:600;font-size:17px;font-variant-numeric:tabular-nums}
+.cert .note{font-size:13px;color:var(--muted)}
+.debrief{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+.debrief .panel{padding:20px 24px;display:flex;flex-direction:column;gap:12px}
+.debrief h3{font-family:var(--display);font-weight:600;font-size:22px}
+.debrief ol,.debrief ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px}
+
+footer .wrap{padding-block:0 32px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;font-size:12.5px;color:var(--muted)}
+.linkbtn{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:12.5px}
+
+@media (max-width:900px){
+  .desk{grid-template-columns:minmax(0,1fr)}
+  .viewtabs{display:flex}
+  .desk[data-view="room"] .case{display:none}
+  .desk[data-view="case"] .roomcol{display:none}
+  .case{position:static;max-height:none}
+  .debrief{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:560px){
+  .row,.row.narrow{grid-template-columns:24px minmax(0,1fr)}
+  .row select{grid-column:2}
+  .room-head,.room-body{padding-left:16px;padding-right:16px}
+  .strip .wrap{grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+  .pip span{font-size:0}
+  .pip span::before{content:attr(data-n);font-size:11px}
+  .cert{padding:28px 16px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .opened{animation:rise .35s ease-out}
+  @keyframes rise{from{transform:translateY(6px)}to{transform:none}}
+}
+</style>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<header class="band">
+  <div class="wrap gut">
+    <div class="brand">
+      <p class="eyebrow">George Mason University &#xb7; School of Nursing &#xb7; NURS 632</p>
+      <h1>The Wolf <span>File</span></h1>
+      <p class="sub">Ward 7, maximum security &#xb7; A clinical escape room on predatory violence</p>
+    </div>
+    <div class="clock" id="clock" hidden>
+      <div><b id="t">60:00</b><small id="tlabel">Until review</small></div>
+      <div><b id="hc">0</b><small>Hints</small></div>
+      <div><b id="wc">0</b><small>Misses</small></div>
+    </div>
+  </div>
+  <nav class="strip" id="strip" hidden aria-label="Locks"><div class="wrap gut" id="pips"></div></nav>
+</header>
+
+<main><div class="wrap gut" id="app"><p class="meta" style="padding-block:24px">Loading the activity. If nothing appears, this viewer is blocking scripts. Open the activity from its web link instead.</p></div></main>
+
+<footer><div class="wrap gut">
+  <span>Case adapted for teaching from a published psychopharmacology case on persistent predatory violence. Details paraphrased.</span>
+  <span id="resetzone"><button class="linkbtn" id="reset" type="button">Reset progress</button></span>
+</div></footer>
+
+<template id="casefile">
+<aside class="panel case" aria-label="Case file">
+  <div class="case-head"><h2>Case file</h2><span class="eyebrow" style="color:var(--muted)">M, 39 &#xb7; NGRI &#xb7; Transfer</span></div>
+  <section>
+    <h3>Reason for transfer</h3>
+    <p>Found not guilty by reason of insanity and committed to the state forensic hospital system. At the first facility he assaulted peers and staff repeatedly. The attacks were retaliatory, never in self-defense, and usually followed a disagreement or a perceived slight. He had PRN oral haloperidol, lorazepam, and diphenhydramine with IM backups, but no scheduled medication.</p>
+    <p>A week after a staff member told him he could not attend a music event on campus, he punched, tried to choke, and assaulted that staff member in a blind hallway during shift change. Three weeks after admission he was moved to your maximum-security unit.</p>
+  </section>
+  <section>
+    <h3>Diagnoses on the transfer packet</h3>
+    <ul><li>Delusional disorder</li><li>Neurocognitive disorder due to traumatic brain injury</li><li>Stimulant use disorder, methamphetamine type</li><li>Cannabis use disorder</li></ul>
+  </section>
+  <section>
+    <h3>Mental status on admission</h3>
+    <dl>
+      <dt>Appearance</dt><dd>Calm, polite, cooperative. Grooming and hygiene fair.</dd>
+      <dt>Motor</dt><dd>No agitation, retardation, or abnormal involuntary movements.</dd>
+      <dt>Speech</dt><dd>Normal rate, rhythm, volume. Spontaneous and goal-directed.</dd>
+      <dt>Mood / affect</dt><dd>"Good." Affect stable.</dd>
+      <dt>Thought</dt><dd>Linear, organized, goal-directed. Denies SI and HI.</dd>
+      <dt>Perception</dt><dd>Denies perceptual disturbances.</dd>
+      <dt>Cognition</dt><dd>Alert, oriented x3. Memory, abstraction, fund of knowledge, attention fair; at his baseline.</dd>
+      <dt>Insight / judgment</dt><dd>Fair.</dd>
+    </dl>
+  </section>
+  <section>
+    <h3>Developmental and psychiatric history</h3>
+    <ul class="tl">
+      <li><b>Age 5</b><span>Car accident with loss of consciousness. Partial seizures afterward, with noticeable changes in personality and behavior. Psychiatric treatment begins and continues to age 17.</span></li>
+      <li><b>Age 8</b><span>First psychiatric hospitalization.</span></li>
+      <li><b>Age 11</b><span>Two black eyes and a suspected head injury. Records describe visual hallucinations, delusions, hyperactivity, insomnia, and disorientation.</span></li>
+      <li><b>Age 12</b><span>Suicide attempt by overdose. Neuropsychological testing (repeated at 16): cerebral dysfunction, dyspraxia, dysgraphia, dyslexia, average intelligence; reality-testing deficits resembling those seen in psychosis; traits suggesting severe psychopathology with persistent affective and behavioral dysregulation.</span></li>
+    </ul>
+    <p>Childhood diagnoses: conduct disorder, ADHD, psychosis, bipolar disorder. Impulsive, hyperactive, inattentive, hypersexual, and unprovoked aggressive behavior. Treated with valproic acid, clonidine, and olanzapine; he says valproic acid and clonidine helped. Repeated decompensation in the community led to long-term residential care.</p>
+    <p>Adult: denies any psychiatric medication. No prior forensic hospitalizations. Extensive violence history with multiple arrests, charges, and violence in custody. No known psychotherapy.</p>
+  </section>
+  <section>
+    <h3>Substance use</h3>
+    <p>Calls cannabis his drug of choice, but reports daily crystal methamphetamine for about 10 years, including at the time of the index offense.</p>
+  </section>
+  <section>
+    <h3>Social history</h3>
+    <p>Parents divorced when he was young; father was primary caregiver because of impaired mother-child bonding. Raised largely in group homes because of his behavior. First arrest and charge at age 12. Completed 11 years of school plus trade school. Worked as a crane operator. Intermittent Social Security benefits. Never married; three children.</p>
+  </section>
+  <section>
+    <h3>Medical and family history</h3>
+    <p>Traumatic brain injury. Hypertension. No known family psychiatric history.</p>
+  </section>
+  <section id="course">
+    <h3>Hospital course on Ward 7</h3>
+    <div id="courseBody"></div>
+  </section>
+</aside>
+</template>
+
+<template id="coursetext">
+<ul class="tl">
+  <li><b>Month 1</b><span>Redirected by staff after taking unit rules personally and calling them unjust.</span></li>
+  <li><b>Month 3</b><span>Psychology evaluation: high scores on psychopathy measures. Superficial, glib, deceitful, manipulative, inflated self-worth, blames others; narrow affective range and poor empathy. Lifestyle: exploits others financially, impulsive, irresponsible, unrealistic goals, risk-taking, trouble controlling anger.</span></li>
+  <li><b>Month 5</b><span>Restrained after a fight in which he broke a peer's jaw. No psychotic signs during or after; glib, controlling, superficial.</span></li>
+</ul>
+<p>Throughout: no psychotic, mood, or affective symptoms; no persecutory or jealous themes; no decompensation. Multiple verbal and physical assaults, each tied to a clear outcome. Disparaging comments to peers and staff.</p>
+<p>Refuses consent for medication; no court order for involuntary treatment. Has taken only PRN hydroxyzine, occasionally, for sleep. PRN haloperidol and hydroxyzine remain available. The team attributes his violence to character pathology plus TBI-related frontotemporal neurocognitive disorder.</p>
+</template>
+
+<script>
+const ROOMS = [{"id":"records","short":"Records","place":"Records room","title":"Rebuild the history","prompt":"\u003cp>The transfer packet arrived with the chart out of order. Before anyone can make sense of his violence, the team has to rebuild his history.\u003c/p>\u003cp>The door code is his age at four events, entered in the order they happened: the car accident with loss of consciousness, his first psychiatric hospitalization, the suspected second head injury, and his first arrest.\u003c/p>","hints":["Every age you need is in the Case File, under Developmental and psychiatric history and Social history.","The code is six digits long. Two of the four ages have two digits."],"salt":"wf0-3ub19qcmer","hash":"1od33qebfi7","cipher":"3pHLZJPad6bgz0dXvhgMXC4EsU8e28lkRv6fPIW96aeTRX8gz/woNWGZ0Nk6Yu19oZH6lU1TcdusmPKQXhfrkjf3m6SNJCGOAdD19gXCQpLQ5+MxWieP7Tu5MD1cYrCR1Pn1ugYSKUXyV54KpdQoWCJ9oygloMV3LSYczSy3BqlCRDY0rrsaYSJ/BVlzyyiwva2NPLqjsaw32zfcbR0TUsBucHAK7mOQ73sQNMCuE+IUohuCYflIz4KPDfZJ4XUjxq5fSDohS++ji7BXu/vWWOtWFcZ7VijogpFEdHMzPlAgezj6zzOSDCNEAPwLb5+3QDpMkjQcORa7Ru9ilV9xAGGTK0D+AeIGcwOC2apLzBXkyUMH/kyNM8uPiy6gD3yvtdcLbOI0PPkeS4lGq+55Uo/jl5CrZytiRAxWoli1yg3v/W9gF14O+GnOREfEuopD+wEPERuMM2R86tgfOsCwWMtU9sHhRKVbRBlpKUdk6BH4L0GR7HH5UJJJAd3ZgqT9fkenf+d+LxmaG1diMZAgY5sfn5Ri8O+VjJRlu/4x9ortuOWSCez2Ct6fJsZX2fKmgUKK0YmluMlTmsZyHvAlMKbkBtALP7L9aOUYHW5wB1ARXPJOyOp7hMLyEkHpTuOOWLXTlPygef30QygcfD6LErwjnZ1yjDhmodUBA+bz5YsrkA2DuBBG+ZZgEubqjMrqDZ5AQ2z4j7P0J8uDLJgDNqw+hl30Io5t5g7Re7AxOKVP5ZKLj5Mh8MZXEU+6YRkGgBWRwPQjNj79QzZZbO9DB0uY7Yp1i7mfR5A+KJ8NMnA0u4Vns3c+cnTrXsHu4ykdi7XGYuSPkiCbgFdwlJOnSzu4BzR7KNGeniJilJf2HWQFOWaNnsBkPHFI/hi0PxAGh0fZXR1Rgpqie/Wrwf8HH3PcpVEumFym4Cp+X4aBbpqb1B80fedyMrybE1Pz3+i5UNsusozlJTovpDtXfwzZUnkOgmm3jyjeflvxrXDKS9JHjhSuu34xnoA7u454+cEEaXKhd7kORUIE6+WIwMOvQy80AXHADMu+1gkmw2L1MnH8/GbLdh50FlFPphBJkQ0=","parts":[{"kind":"code","label":"Door code","placeholder":"Digits only","mono":true,"hash":"lj0qy3n235"}]},{"id":"diagnosis","short":"Diagnosis","place":"Diagnosis board","title":"What is active now?","prompt":"\u003cp>His admission paperwork still lists delusional disorder. Five months on your unit tell a different story.\u003c/p>\u003cp>Select every diagnosis the treatment team's current formulation supports. Leave the rest.\u003c/p>","hints":["Read the hospital course. What symptoms has he shown since admission, and what has he denied?","Three are correct. One rests on the psychology evaluation at month 3."],"salt":"wf1-1sf90ufkxvk","hash":"626srzir76","cipher":"pAGodymZajgRXqI4f44LjUQueMhEgJ+B3FhpNQDohgWrjkopVCDA9C/+FZq5trC9ipn7LLLiqE+gdkqZBXy0Ew6PE/aeIYWZk8pH8vg20/Hsu/7zyEWmZFNSIagONboy6gyz76eDfGv+bQbwczwppAN6yQDlu0Le4IU/OgawSVdBb2l7iUTKXJqyhJb7W+rYJtU2EJOk3KTvL0AMy1Om/Gpvz90l7m3/IbPsDzW4g/iCvCBPZyTdJxQspJ/k9od3dyykvZCmJXCBJliOoBM3YnEY61R1QX+Yo3qj7RNnbmqjK3nFcXpl/+9vOLvSab3ezUQDkfTKGQ56af8nblw9Gh4dyGe2Zpe72hFEZeXMtI7wAEbAqyj7XCfhQTTfhCO0vCQ+weU1awVFgCedALQAe5wF1f5zgGgAdc3SPFUL1FvF2ieA5TXn2aTlNQF3JRDxsQJHg0GLUx5yx4YZv8DkuDCZoJJI7lIIOAvI6EW0gAT5+OVFqyDZiMtuqwyLb9YlcW5/6gaR1rqT+CeuNIO74/sExqAkXNczSzyp2ttVAgG7dL3PonqW7QliafX9PWlR7Sm4gxo4GnZCx7QJ5CCUtDw2DXuS11M8UTv+MAQ9Cq57hhhC3SxkTzumbE1kPPSEUm/6py8O/OwGj8voNCF1BjCeHRGEn3C5viMm6nO3yPbx3EavZTVm0aP4UGY4XaNfSvOt1lN9DB3OA+ZFbXOoAetI5n+imyDw73AbQ80ZdVQL9ueUSTjWh30FF+77tZ1NDCgclYDRn3TEm8nGAS5meckirZmlZaPGlCCU0/RdAJiBxgBqqOx2lmefbOxyDZ0VeIvA5AbEVpaZymp9cKhyMObt1QWFRkS8/G8zhGelTECB7juKazjXOgQeUZpEPRN0UZywP3ubZTVcgcpvf9GzpmmyeCE/QQxJ+UdjJ0dvSEfZkA8dJznCUXdo+vLxoiBn9fUz8tguGyrI4/2jgJOv0nAXzrTnKUvnbRxfHGmRaJFA/U93RyNW5Jw6Bq0+nDFZdnJJV7uVjhLvP+lbfHTfolpYDwvQkuwLyoG2d876jTikSo5W00/udx0VtJglpJ2Kdvw95BKwgDeh6cV0W5aNoCRXFUBiWgVyASl2ywOq0ZgUQJ9AF5Mf0luL4Xb12rdmqO7jWV7y/kdQM5/17aHuHzZeb4psgYRZYLe7adWfDwtjC1RBnzuO4fMwz6tKg4HILroINDQXdfmpEkKxXOPCGSRwyMCHg8qSYmBwVvZVowDeASFgwIi5HOugQTtlMdgOFHdKoZ2Qj/UljvBE+g+q0m0W/VYlmudQFLSIcY0O9Z16G9QJ/j71WK2wALBtTZ8JKcKZzaEOaYVxkOuYgckUK2nkd5IT6WMwawG9amf79ol0NxZ+etCj+69CKQaUEBzpaLHgciHD50AQN5CRdu4GOkoC8XyMqFmf+Ud72YDevARtdS9ZBNTtmSzXhurnWDPspMnt+9d8TWSu1+72wZ1l","parts":[{"kind":"multi","label":"Working diagnoses","options":[{"id":"a","label":"Stimulant use disorder, methamphetamine type"},{"id":"b","label":"Delusional disorder, persecutory type, currently active"},{"id":"c","label":"Mild frontotemporal neurocognitive disorder"},{"id":"d","label":"Bipolar I disorder, current episode manic"},{"id":"e","label":"Unspecified personality disorder with antisocial and narcissistic traits"},{"id":"f","label":"Schizophrenia"}],"hash":"1pdi4375cer"}]},{"id":"incidents","short":"Incidents","place":"Incident reports","title":"Classify the violence","prompt":"\u003cp>Six incident reports are on the desk, from this patient and from others on the unit. Classify each act by subtype. Meloy's criteria are your key.\u003c/p>","hints":["Ask three questions of each report. Was the person physiologically aroused? Was there a perceived threat, real or delusional? Was the act planned toward a goal?","Kicking a trash can or punching a wall after bad news is a displaced target. Which subtype displaces?"],"salt":"wf2-uund2mygzo","hash":"196nov358k6","cipher":"EtnAreswUKTXoUbcMsDO/2syJSOYqnInyQgfYfGqa0/5rxJk559e4inNCv5IPxb0REFl/1gM0+u7k0QvcZ7XZNlTBgI5+SdOfZ5/B3rsm7A/EGyYTQen7ekpL+iTBuHOHTreL/mcbAKn/y6DzJ14R3Mfr7/aygG4zBc+65r559z6vZW3h+KnXgzTuh3zcJBKVtnXxIhevgYdZ+dkt4NLej997LF8nzvbah+xgQkXRPYwvfucSQHBU5wrk8TYO6uQCJpOLlsXobjfEc3JGkjYoh8e6/jFOCKEc0gsQvXMZcRTp33Ro7ORm8+h6di3naMDenRzyg9yd6CNaGIuslzV+4e/h056lxIEAKMLulcgs84XOLoa08VeMgyHrnivDcdjODKG3nDlS/nwqY5q6rSxrwCnq+0gZkTqrf1E9Kwh4dZJ2Pi/YxIgKXMvdFEG/pu2ZpdeYWT5Xy2wceVMy09ozCxO11WrPleRkyt4oEqu5c13620TMlmZRDaPAsTzzujCkTC1RUY5sHnFCjeQV/e/F2J6yL2MJjm6XN9d7rghBg1SS09lo7xTg7Tzv+XTZ1Tol8DZRaxi7xbgmFlcGMtflngl4CMseldM66KvovFsn8xPP2nT9hys7JZMdUokZf9AY9v2PHetqE2xRZrZjUVbMZRCMgWK1kMda8GSM+S2jUzOBteaQXj5vg7g7TTtTcCs4iujDwc0xQ/8upKRfXnv/q+W1+UtdI69zcujxTN2P6XBUJ5V5D0IHVhAUI+Z1iMFR2rDc6lzldHbfTy3bfYjsbzS0LLxihrCccErX0ZAAP248A96VvOq7ssSVxmopMAK+Ka6Q+naTT4tDCFrCh7OsBzUQuSrq+1YDfFdn0akDhAT145KiyTSwpfDpO00jz5r5bFe2mIdrFiCs9Qtam184ttNBsu7Ai1Pn1FGVBkYP9h6GmvQGlrvSZOErWvSnXfuYXUvYF8mpvcveMVTgiGBpn/iWDmnPX5PKCMYPlVXOMn5sev8IpW7cZbbuojzpYFSLYoAQjKQsgz7i0H2iIieKu/YzcLtvCJOYn8uGRuwaiMayENSXN1nn32+wDHaOcGl90xPWKF3aE2HyxvA2P3BQtBfwGuRp1QCvkYuEcnNgrxRl59BsGpNga/nIOiYMPZpN6EtLGkWETAaEjLFhuWn5dQNbs3m+Ey4hYmBIk9QcxKx3hL+Td6QZUZ8ojKky10vqVeBMXUi8OjWAvq/tT6G2gaqT0OMfRRooctPoKT7XV3VNkXY2pa7gtXOMYmi+XU7ZGY15cGhGBXLqErSCmSZOrxFJjkPVyOihRcWNmaMJawf60V4ZhkSfAXmGmZNQgNMaAUmXcXbI2KbGY8bIzc8HCW/brz8e7FVuW0DG5IVZUS6LNh50XMXKbQUbQl+8FhZO0GPF9RUX/a1L8CcAirx","parts":[{"kind":"match","label":"Incident reports","options":[{"id":"I","label":"Impulsive (affective)"},{"id":"P","label":"Predatory (instrumental)"},{"id":"S","label":"Psychotic"}],"items":["A week after a staff member told him he could not attend a campus music event, he punched and tried to choke that same staff member in a blind hallway during shift change.","A patient who hears voices telling him his roommate is poisoning his food attacks the roommate at dinner.","Bumped in the medication line, a patient shoves the peer within seconds. He is flushed and shaking, and tearful an hour later.","After his mother cancels a visit by phone, a patient kicks over a trash can and punches the dayroom wall.","Over several days a patient learns a peer\u2019s routine, waits until staff are busy, and beats the peer who owes him canteen money. He is calm afterward, heart rate 68.","A patient barricades his door, convinced the staff are federal agents sent to kill him, and strikes the first nurse who enters."],"hash":"grlgg41y5","itemHashes":["24cwqyjjokm","bujp8jm42d","26dl6lfvfai","1sjx99y74xq","9powtf5nd3","96fva4p8sd"]}]},{"id":"neuro","short":"Neuro lab","place":"Neuroimaging lab","title":"Read the circuitry","prompt":"\u003cp>Pair each structure or finding with its function or its clinical picture in violent behavior. One card in the bank is a decoy.\u003c/p>","hints":["Predatory violence is \"cold.\" The planner works; the emotional brakes are weak.","The decoy describes autonomic arousal. Meloy\u2019s criteria say predatory violence shows little of it."],"salt":"wf3-160r8rle0a4","hash":"1e629eo6ky9","cipher":"0tQiE1OT2/bezHDMBWOSePcRAfuI6nSYZCexJWcapCBZOIAOptV5RzF/JKMkiIUdZV+4RAKoxOtshvjblpvFAKCr7+hOAHRrYRLIxCl1cRAIZS6l8j7JtYOewjhSaFIjWWtgsVsmvArVZq6YLc+vxW8Sqam/+FDLQDsA+A/Hw4RZEAX4MnLXjoCbLbBVKGrRLv1Dc/+zLuBj8dve2sNd6VAnGgGGBawj9TzGIsXvQIVwA9c+zX15HmHC6M1Bv3WRJ6FlpYBVAR1Z2vM6atnwCUy+ySQr0UUZMwovvw3OLp8LkevdduDeHXsWoGz1ZNWn7xxyWneCsCNLO2PbsFT8GrNtWGiG4Q4o/WQ1jorRHDtzS4R6WRdE8SxQ+Pn4X3SBdkjOp1jz/jcFqHUJA0TXxlVWqyy+6pvsn1ie4I15u6VJD5+LC7AbkHkj3k0gVRU87iNLsW/5OgdNpt44SxNbTTOU1sgsqXovxe6TXfiO4bxsEKrbqCEYiYU0vAD47c6b8U7EnBTF14LnCrHiM9qxx3t0iCTLPtv0ocT4tbZshWnI6RmbELspzawIWipva5ZDHccPGI3m8ry0ZUUWyeU1i5qKHx1A+VRCKNAUZvflnFGJLYooaArVqvSFZawwSLCnTD+0s1abh4kzp+/wA9/fBPMMpjDN7fc3GFfY7BFDrl/vHiF5eF83oejZXT7cMAH7weD1EOlYOzuOE+a6KNHnL1kxnMLSLRoP9GXrOh0KwTWUmnFSk7wREFFTPJKDnc11Dt+0imqTcumeUYfKaTA8xERz1L7hcBmDbPyj9b7dZQFd3S/BBdd5bIKiydJ7LVfJAGY7tvEK7JSgVf105hBRWUD+EzVzEVlqmAzBZ5a91WROWDjSUVcMGA08lYwFL67UursQY65V4m6nwIQ3TRlZR71kAuAlWOQ1NW1DesBR4fkOgjRybvwBWtn2vmtxwMlz+SI48YgI3tgZImyFHI4DwA7ouAOfZDdxzAd4TK3FHaF9EQHr4JqfC2/0c/y+4248Iz1Ar2OxXrd9oUgg0iPqCgxwm4okZ6iDdWPhDXYOg0kEhpSJ67sbBqrN484l3XcdK3R8ckWDzcGMz4Wps+ggiI1HkIJluoF9v+FPlN+/ZkzPuRQrrzsWGYm/pzW/wb1hnqU5NXZ+wTQfMKhdOW+lDOjpzci6s9mY4BcpQtXV9SGzzb7ZlkJCdxSC9L87rvQtGdtYc7hVW+Y9fYcTZ+NMooDTNMfLROjDBvWOGss3csCe0CI1IqbfzAudwaDpYvidQ0UBPNIkBHLob3xjy4QmOMcMj48Uo5B09o6C0uzSqajlKnH9LI0DcbjwIaI9RMu4nGZB7CErjrhufxvWpYmoAxBmwvnh6Pmmxz8z0+szGmaWgmgSg3B0xycc1eHlpD1wDNGy3yfnpowXjSPTGhRv1TFLX04kzngjYGKpkYoJPHV3IVAYPyBkl95q6To44Q2Erwabx9IdLBnxkXgXUBQcENu6FzCflwrEgI1IlB6x8V85K8fU85uuzBex6knmGZTqTaADUl6cZzYf8oSeTdDGyIKT3rri3wpg5/FoOLWam8PHCO8guZoWkVIE8s2mu3V5rIksS7zc1mI9JLV7uFYHbAxE5IgE","parts":[{"kind":"match","label":"Match board","bank":true,"options":[{"id":"A","label":"Impaired moral development"},{"id":"B","label":"Normal to increased, with strong intrafrontal connectivity"},{"id":"C","label":"Plans, sequences, solves problems, and adapts behavior"},{"id":"D","label":"Aggressive impulsivity"},{"id":"E","label":"Rising heart rate and sweating just before the attack"},{"id":"F","label":"Links frontal cortex to limbic centers and guides responses to social cues"},{"id":"G","label":"Shallow affect and little affective empathy"}],"items":["Dorsolateral prefrontal cortex","Orbitofrontal circuit","Ventromedial prefrontal cortex damaged early in development","Limbic hypometabolism (amygdala, hippocampal formation, cingulate)","Limbic hypermetabolism","Prefrontal activity in predatory violence"],"hash":"chinyom0l9","itemHashes":["1hsmdpr0sa7","10dwhwmrspg","1m2ehz0lo53","1skmwgqxk1y","1u170p82wmb","7suhzzy1hl"]}]},{"id":"assessment","short":"Assessment","place":"Assessment office","title":"Build the risk workup","prompt":"\u003cp>Psychology wants a risk workup before the monthly review. Sort each instrument by type, then match the three principles of the Risk-Need-Responsivity model.\u003c/p>","hints":["Actuarial tools score fixed items and produce a probability. Structured professional judgment tools walk a clinician through risk factors and end in a clinical judgment.","HCR-20 stands for Historical, Clinical, Risk Management. It is the most widely used structured professional judgment tool. Card D in the second bank is a decoy."],"salt":"wf4-1yihr70nubq","hash":"18zrwzvepyz","cipher":"3c/fF7O4ErjITEbv9BYeX1wLtTba/6bA7WgOtuYmZquKhf85YonfN0AQ6kqOom3y1wEV0N1+Hb/1HTSmJTz3ZUnChCxI7siokrTXhNsn7ZvnTwINnX+GrGeGE4kehjcwTYggC8uJnYqB8MXXCgOpFOLSd5Vnjj+Axt6IqXQCdNtVjqXh2UCeiIsaBJFiXeXDlpgpeP4idj8PI5HVu2pdPLBma/+Mb82yFUVQHfEWkuewIdAPsl5yUbXCPP1R2jj+V7XfgU4IAqvlfeAr0qCaA3bhBG7jemrGY7ODhvLZPVqsQ4QHO/ZbTAmWAsTkdWlZIRiKSXboyyZ3MONH5DScZZ8ndZsCmkEc5mLoZwHIwHV7jEv/GsTslA1/Du364/DfB2pOJx1GjEWpvPi6TWhZIQFu1DAr/jD0/DmkLpqyvJLAuwVktkoG/Pvjs3yUlRsY9u7Am0jRNEjZkZndGfw3kf2sALxuCr9CbTSC3C3b8wVxC73ypzP8gIZVZVZWg4dXuY4+aCIXn6vhQr7m3IfUHL6NpuPu517zn4lAp/Y2iMIQebV2L0eimd7gp59jC68hZqsec9yek61lutyXxvwXL3x70mQjGbwkJ+PGswgcpIlA3rydVQWHk+yR2Sl4Uc1srlv01/FNdTPeRTca/2HmV5RJBoSlPJMd+EGc8nuSZGP8gkXGLmbWA2jKiq5tsOTbiWE5YY0ZUr3ht4kW36SBvJXAK6Gta90b6IndbiTYQyl00gn0wPalODhRI+57YQd6guHP8bmP7TJ2+28yMm2o84BL/CF0oY+9/E+44x7i9gMXXmf4bJI3+cIH04SjDP6MmvQsf+xpcl6LgYqx2Pe0hC5hRa9hx9Wf+8EPmusn0TWRv3UhDSFSG2eul9AqM8410wqAlIWJBi4jaVmihuOO8kJhfz3nXelaUGsNBkxGrNKqUHH0Pps17C0e/zon7ZrBkJoVwCM0oG2pb8O77qxqr2cIWG/Rpl/M9VH8ufpuGqx8q0pLZ43dFaf79iJKZ4xUzYhrNuJhVnRpDZ15MBfb10++Wkx0Mdgyu6axhNAkvqY4hc0ZC3Zp8Q==","parts":[{"kind":"match","label":"Instruments","options":[{"id":"spj","label":"Structured professional judgment"},{"id":"act","label":"Actuarial"},{"id":"psy","label":"Psychopathy assessment"}],"items":["HCR-20","VRAG","PCL-R","START","COVR","V-RISK-10"],"hash":"1i0y9lmj6ml","itemHashes":["28m7prwp6n5","10nl15v1ou8","1mpnnxrbpcj","by5qvam3rd","f034zbugkv","1nijn8y25z4"]},{"kind":"match","label":"Risk-Need-Responsivity","bank":true,"options":[{"id":"A","label":"Shapes how treatment is delivered to fit the patient\u2019s strengths, motivation, and learning style"},{"id":"B","label":"Identifies the outcomes the patient is after when he turns to violence"},{"id":"C","label":"Identifies the risk factors and behaviors that can set violence off"},{"id":"D","label":"Sets the legal threshold for involuntary medication"}],"items":["Risk","Need","Responsivity"],"hash":"zv3xtdwutm","itemHashes":["cdm2ujp18v","k9bp9z0lb5","1ibrwyzcyro"]}]},{"id":"audit","short":"Safety audit","place":"Unit safety audit","title":"Look past the patient","prompt":"\u003cp>Before anyone writes orders, audit the unit. Persistent violence is rarely only a patient problem. Assign each finding to its domain.\u003c/p>","hints":["Patient factors include labs, vital signs, medical conditions, medication side effects, and psychiatric symptoms.","Two items are scheduling and two are institutional. Environmental and staff get one each."],"salt":"wf5-1wyfr36qtat","hash":"mjnf8ivqru","cipher":"+E5VtPmTlV6ruM2rW1/k41LYYtcW47FUnOaPeCBid8CM28786JktIAgnrOE9pr8RfGFbrtQiWs9yz+H5c6XZFiIhZecldNxgfUNti0qbr/coXpsPX6YgEP721EMgtkiSJjHn2DDY0idszZ+gCyWoIrgN/p9uRPoiTt4EvI5hUThr18qesKclbk1YnZkgcWKK8KKoLFgXBkYVUh5wuiGpJXpwClKchnbxmu4g3k2qanfX0PqS6V8XOPMOE8mdf6udsWSdaAahqzBHC/HU+H6wG25P9DLrPModuSV8ZeAsazxQFlerEiPNWjSoLdzzQ6XwgNpdIDtgCxqFP8aTz+UBzpWibPbumFV3Ul4pK4i//3cGgX1H2pkuVZED4kvH9xNUiD7Au+itLPP7umBepMR1DeZ/KP6pE6Vd+RVkJypCcwRWNs/XL47hoUSjfk1d1U93VNWAR6vHoGkvRR1cxZSKwZCq6YXY7uoI5ZbE704KY+ogmRLane9im6rKR3JuCiqao+NV+ZRVWkXHynPTg7MDDn8Ib+S/20gMykMVHrmAFqo6b0P5Z8vZgfTdJdylsvQSM2bJi7l7G3UwSxLvdQt+UgBpISN45Zrc7TJhm/BhI3Ymi/QyoyFyVrmzeqLUfpls1yd8ZF75KeQ283fHXMQe+JnMIWtCBf9toQYbgTvlHEoRjXCdIIsdBvfZHj2c1Sy6TUTi+Qh5RiJzjfhWhpTh+67qGrM4HRl54EVt1MFbQx5Y3BGrpqhBIuNjGgxbvgrJh9vBdGvNcSOmoJWUI87zgxHArZkAfvkqdKXpUpea1iUnXTbFT8xH7b5520+7m4EQJoPQfkJcojzQfIVOALJTQdJ9m/dy5uitzpDeZIpD3sk7XfnSLZsHzKr9+wyUN67VZCKkeGJTJd0s4oZbYk2JU0+F5QPWquYtnb2JK41DSfy5qsDAyer+tiebT7DbIWUBaTPdRSkCKCo0WEsa3m1dyJEqgRhby9AKOPD2QSkYzYCL7TEbkq1fWGHt8emY380PLFLO88zgoMQeWpRqmDJcKENU6TQwc8B4dSNC1KrwT4ECeZ398B56KkrfrkgZ2Yni6r3dkz1GAi6W1vUfkItt06GkZLh37vXKlwp1WLw=","parts":[{"kind":"match","label":"Audit findings","options":[{"id":"pt","label":"Patient"},{"id":"env","label":"Environmental"},{"id":"sch","label":"Scheduling"},{"id":"stf","label":"Staff"},{"id":"ins","label":"Institutional"}],"items":["Sodium, calcium, glucose, TSH, ammonia, and ESR have not been checked since transfer.","Patients stand shoulder to shoulder while lining up for meals.","Weekend afternoons are long unstructured blocks with no planned groups.","Three nurses have left the unit this quarter, and the rest report burnout.","There is no pathway to move a repeatedly violent patient to a unit with more programming and security.","A peer started on an antipsychotic last week is pacing and cannot sit still.","Most fights happen while patients are moving between buildings.","Records from the sending facility never arrived, so the team cannot see prior risk factors."],"hash":"290auh8948y","itemHashes":["xe3ydbhun3","5q8mm18ti3","28hx87flbg6","1s6w1y1c24r","10ugmyxwscr","10wv3tdzotv","17748vnefip","truo52kqsw"]}]},{"id":"meds","short":"Med room","place":"Medication room","title":"The psychopharmacologist\u2019s dilemma","prompt":"\u003cp>Last door. He refuses consent for scheduled medication and is not under a court order. He has taken only PRN hydroxyzine, now and then, for sleep.\u003c/p>\u003cp>Choose every reasonable next step, then enter the receptor code.\u003c/p>","hints":["He named two medications that helped him as a child. Start there. Then ask which options need consent or legal authority he has not given.","The receptor code is the serotonin receptor that defines second-generation antipsychotics. Format it however you like."],"salt":"wf6-ctbh4ucay5","hash":"2g9e1a9rmz2","cipher":"t3HVVcy0HET0ttc0PEF8tKiEC9Y63qHGzC9dBw1nlMBaKI98UcnlB8RyFgeJ62NmSbJ4gzkHerwpZpLb5k+busJmIypgK5AbzUaeL/s86dS1//DzyZY/mQNqhsAPfz8nFKJh8R+D9WUKQuBr21bpNxEDUx8AYd1nKRDVTav4H35MMHfWvlck0H+YHc6iP57+M5SxgpKI0sFdPyyqHbrio37VHCrkxSxzRxGmM0Ddm3Uzyr1Qnn7utdLk6UZdAMCr28h8wyleqXd02aQ2aU61z87PEhzPf/NwgTA4b5KSv5Gf3wXjOp0/2cZlXUPyVA+HWoz2d6H6eWjtKX20sQdM7bYJPmhIraOsDZtsQ8aRLtHeHphtgvXj6xrx6CS/48ztVSpHO7fVymohr+V6yDfkaQbgEXk7uc8tQ598Lv4TM11WFCBsHDBPZEA0rnlu++z8lgjrweWj2JoWccoCZrPAxmzjXBBS3pEmlBcdrhtfTB0sUJGgvjUmdA7XANcUuxLWlgpQLhcXcHFDbaw80Jmu1Vhkg9eILyemjWKNWLstjBiwM4UJbZ8eog6fmNXJysE562VuPoRS9o/DrSFOm+2H27lmUKa1zloEUDyYiwDVtZi+LtRZ2l+pHSlo0jASKO9njfwRmcS654JPidIhjix6eT8IRbLIScCQzV3MzuMF5Ip9U6LdBqrbkfW8H6DG2hk0bOQHTDODX8/zjxLzrblyyEW4ZSwqtwovhmr/+ZrR2goBvaJyh+JmMH7pzHI3LqW15Xu5dpnyym5/SaqF/mh6LTe2f+Ni17TGmRqdjP0ich4nRd9aEOpn0YzYNCgL8qA4nHrZ6CoKgDynAA61kak3lUqQMBGKoOG5Wr7MOFnnIpPfypJhDNVYnlVyR5AvXuHtscynZaXpirBtgAeel6vhHSGkJhHfi1YkG4rNEQ9oUMbfC/zGqtmI5CqUVmjyPNgvaVWDN7LoSO3u2/tS9IBgZpJ/IunXMKUX+Y3CS7qDDhZs4FoGhcEii/3ZjxUwHj2h18kmTsGnnSHdSSblppXVNDQ9jMvW4aEpH6aDtaD6qKQX19ZrugWWok/0rrvdTaStjBH0rQeoS7eFus62lRqX3yPR9Tg8J3D2UDsTmW1wPKh0aQEFMDFW4o3MXCadpIfZISDtJJpY4qt5LaqTgHQCL3vHJizg6lUAGlwkROrIW5QLmElo5cCeowB4kH8dvHuvAqzBhiJBHSBgK2pqgAz/2NkMbEEfoQ60VhpmD3uH3nn+kJwoQFy4kxfVBSJB/7P4c2Bzq+32/ute7e7o1+YwayL1epNVUsjW58vszz12fLpNTKfSDYHszGqFX0DOW4sCQFWDR0OpZaXozBC2Mriskh4aTVQufn1ZfYLNSyGhEcYeE/FshF+e/kpc4yyxu5dFreZODCLzALsk+juLWrXfaNSniD9gXlJOyU4OrKCuma0hNyQOlrfL5SEfhr0ySz3Ia2E+wPFuZe7YxmTnMSSBkznPjzuyMfl4siOYp5t0m7zweT73ffWiKO+uAqcTlSmBwYSzbzQHgBiNX6GDrOAz6xSKvudt+XaL+TFx4YC8if4gQOn2i2FtUvoBokw/n5J6iMGS1niF9me8fCqhAJ592HqWjryo+dOHIELumyyW4eC7NPs0c00B4z6FtQXqqP1YQ4uAlej+yzPUuL+/jTPL4Bs71olCdJxsWMoRL32rPg6XDVhMSbsnKmkZ4QbV2BIiSiN02Cp3imJnLG1UA1SM1+8Cygwwt3Nve0d/AUjEHlygwYSnmmmg9ooOcl+7ux87NUYcJ9E3TNcST4dMqsfhc8/pakX/J53sOkVaK7X92g==","parts":[{"kind":"multi","label":"Next steps","options":[{"id":"a","label":"Offer a trial of valproic acid, which he says helped him as a child"},{"id":"b","label":"Offer clonidine, which he also says helped"},{"id":"c","label":"Give scheduled haloperidol over his objection, since he once had persecutory delusions"},{"id":"d","label":"Review hospital policy and state and federal law to see whether he meets criteria for involuntary medication"},{"id":"e","label":"Stop offering PRN medications, since he declines scheduled ones"},{"id":"f","label":"Discuss clozapine, which is associated with less aggression regardless of violence subtype"},{"id":"g","label":"Rely on an SSRI as the main agent for his predatory assaults"}],"hash":"zn1r0lvmqd"},{"kind":"code","label":"Receptor code","sub":"Clozapine blocks D2 receptors. Name the other receptor whose blockade increases dopamine release in key brain regions, limiting motor side effects and helping cognitive and affective symptoms.","placeholder":"Receptor","receptor":true,"hash":"bcwor7o5g4"}]}];
+const LIMIT = 60 * 60 * 1000;
+const KEY = 'wolf-file-v1';
+
+function cyrb53(str, seed){let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;for(let i=0,ch;i<str.length;i++){ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677);}h1=Math.imul(h1^(h1>>>16),2246822507);h1^=Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507);h2^=Math.imul(h1^(h1>>>13),3266489909);return 4294967296*(2097151&h2)+(h1>>>0);}
+function mulberry32(a){return function(){a|=0;a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};}
+const H = s => cyrb53(s,1777).toString(36);
+function decrypt(b64, key){const r=mulberry32(cyrb53(key,7)%4294967296);const bin=atob(b64);const out=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)out[i]=bin.charCodeAt(i)^Math.floor(r()*256);return new TextDecoder().decode(out);}
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function fresh(){return {names:'',start:null,end:null,cur:0,view:0,solved:{},hints:{},wrong:0,mobile:'room'};}
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY))||fresh();}catch(e){S=fresh();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+
+const $ = id => document.getElementById(id);
+const app = $('app');
+
+function fmt(ms){ms=Math.max(0,ms);const m=Math.floor(ms/60000),s=Math.floor(ms%60000/1000);return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
+function hintTotal(){return Object.values(S.hints).reduce((a,b)=>a+b,0);}
+
+function tick(){
+  if(!S.start) return;
+  const now = S.end || Date.now();
+  const el = now - S.start;
+  const t=$('t'), lab=$('tlabel');
+  if(S.end){t.textContent=fmt(el);t.className='';lab.textContent='Final time';}
+  else if(el<=LIMIT){t.textContent=fmt(LIMIT-el);t.className='';lab.textContent='Until review';}
+  else{t.textContent='+'+fmt(el-LIMIT);t.className='over';lab.textContent='Overtime';}
+  $('hc').textContent=hintTotal(); $('wc').textContent=S.wrong;
+}
+setInterval(tick,1000);
+
+function renderPips(){
+  const done = !!S.end;
+  $('pips').innerHTML = ROOMS.map((r,i)=>{
+    const open = !!S.solved[r.id], cur = !done && i===S.cur;
+    const go = open || cur;
+    const cls = ['pip',open?'open':'',cur?'cur':'',go?'go':'',(S.view===i)?'viewing':''].join(' ');
+    return `<button class="${cls}" type="button" data-i="${i}" ${go?'':'disabled'} aria-label="Lock ${i+1}, ${esc(r.short)}${open?', open':cur?', current':', locked'}"><i></i><span data-n="${i+1}">${i+1} ${esc(r.short)}</span></button>`;
+  }).join('');
+  $('pips').querySelectorAll('.pip.go').forEach(b=>b.onclick=()=>{S.view=+b.dataset.i;S.mobile='room';save();render();});
+}
+
+function render(){
+  const started = !!S.start;
+  $('clock').hidden = !started; $('strip').hidden = !started;
+  if(!started){renderStart();return;}
+  renderPips(); tick();
+  if(S.end && S.view==='end'){renderFinish();return;}
+  renderDesk();
+}
+
+function renderStart(){
+  app.innerHTML = `
+  <section class="panel start">
+    <div class="room-head"><p class="eyebrow">Briefing</p><h2>Seven locks before the monthly review</h2></div>
+    <div class="room-body">
+      <p>You are the treatment team on Ward 7, the maximum-security unit of a state forensic hospital. A 39-year-old man found not guilty by reason of insanity has just arrived after assaulting a staff member at his last facility. His case comes up for review in 60 minutes.</p>
+      <p>Seven locks stand between your team and a defensible plan. Each one opens with a sound clinical decision. The Case File stays open beside you the whole time, and part of it is sealed until the first lock opens.</p>
+      <div>
+        <p class="part-label" style="margin-bottom:6px">By the last door you should be able to</p>
+        <ol class="obj">
+          <li>Distinguish predatory, impulsive, and psychotic violence using Meloy's criteria.</li>
+          <li>Revise a carried-forward diagnosis against current clinical evidence.</li>
+          <li>Link prefrontal and limbic findings to the clinical picture of predatory violence.</li>
+          <li>Select violence risk instruments and apply the Risk-Need-Responsivity model.</li>
+          <li>Weigh medication options within the limits of consent and involuntary-treatment law.</li>
+        </ol>
+      </div>
+      <div class="rules">
+        <div><b>Teams</b>Work in groups of three or four. One person drives; everyone argues.</div>
+        <div><b>Hints</b>Two per lock. They cost nothing but are recorded on your certificate.</div>
+        <div><b>Misses</b>Wrong tries are counted. Sorting locks tell you how many you placed correctly.</div>
+      </div>
+      <form class="field" id="startForm">
+        <label for="names">Team member names</label>
+        <input id="names" autocomplete="off" placeholder="e.g., J. Rivera, A. Osei, M. Tran" value="${esc(S.names)}">
+        <div class="actions" style="margin-top:8px"><button class="btn primary" type="submit">Start the clock</button><span class="meta" id="startMsg"></span></div>
+      </form>
+    </div>
+  </section>`;
+  $('startForm').onsubmit = e => {
+    e.preventDefault();
+    const n = $('names').value.trim();
+    if(!n){$('startMsg').textContent='Enter at least one name. It appears on the certificate.';$('names').focus();return;}
+    S.names=n; S.start=Date.now(); S.cur=0; S.view=0; save(); render();
+  };
+}
+
+function caseFile(){
+  const frag = $('casefile').content.cloneNode(true);
+  const body = frag.querySelector('#courseBody');
+  if(S.solved[ROOMS[0].id]) body.appendChild($('coursetext').content.cloneNode(true));
+  else body.innerHTML = '<div class="sealed">Sealed \u00b7 opens with Lock 1</div>';
+  return frag;
+}
+
+function partHTML(r,ri,p,pi){
+  const id = `r${ri}p${pi}`;
+  let h = `<div class="part"><p class="part-label">${esc(p.label)}</p>`;
+  if(p.sub) h += `<p class="part-sub">${esc(p.sub)}</p>`;
+  if(p.kind==='code'){
+    h += `<div class="code"><input id="${id}code" autocomplete="off" spellcheck="false" placeholder="${esc(p.placeholder||'')}" aria-label="${esc(p.label)}"></div>`;
+  } else if(p.kind==='multi'){
+    h += `<div class="checks">` + p.options.map(o=>`<label class="check" for="${id}o${o.id}"><input type="checkbox" id="${id}o${o.id}" value="${o.id}"><span>${esc(o.label)}</span></label>`).join('') + `</div>`;
+  } else {
+    if(p.bank) h += `<ul class="bank">` + p.options.map(o=>`<li><b>${o.id}</b><span>${esc(o.label)}</span></li>`).join('') + `</ul>`;
+    h += `<div class="rows">` + p.items.map((it,ii)=>{
+      const opts = `<option value="">${p.bank?'Card':'Choose'}\u2026</option>` + p.options.map(o=>`<option value="${o.id}">${p.bank?o.id:esc(o.label)}</option>`).join('');
+      return `<div class="row${p.bank?' narrow':''}"><span class="n">${ii+1}</span><label for="${id}i${ii}">${esc(it)}</label><select id="${id}i${ii}">${opts}</select></div>`;
+    }).join('') + `</div>`;
+  }
+  return h + `</div>`;
+}
+
+function norm(s, receptor){
+  s = s.toUpperCase();
+  if(receptor) s = s.replace(/SEROTONIN/g,'5HT');
+  return s.replace(/[^A-Z0-9]/g,'');
+}
+
+function readPart(ri,p,pi){
+  const id=`r${ri}p${pi}`;
+  if(p.kind==='code'){const v=norm($(id+'code').value,p.receptor);return {val:v,empty:!v};}
+  if(p.kind==='multi'){const v=p.options.filter(o=>$(id+'o'+o.id).checked).map(o=>o.id).sort().join(',');return {val:v,empty:!v};}
+  const vals=p.items.map((_,ii)=>$(id+'i'+ii).value);
+  return {val:vals.join('|'),vals,empty:vals.some(v=>!v)};
+}
+
+function renderDesk(){
+  const ri = S.view, r = ROOMS[ri], solved = S.solved[r.id];
+  const used = S.hints[r.id]||0;
+  let roomHTML = `<section class="panel">
+    <div class="room-head"><p class="eyebrow">Lock ${ri+1} of 7 \u00b7 ${esc(r.place)}</p><h2>${esc(r.title)}</h2></div>
+    <div class="room-body"><div class="prompt">${r.prompt}</div>`;
+  if(solved){
+    let txt=''; try{txt=decrypt(r.cipher,solved);}catch(e){txt='<p>Lock open.</p>';}
+    const next = ri<ROOMS.length-1 ? `<button class="btn primary" id="next" type="button">${S.view+1<=S.cur?'Go to Lock '+(ri+2):'Next lock'}</button>` : `<button class="btn primary" id="toEnd" type="button">View certificate and debrief</button>`;
+    roomHTML += `<div class="opened"><div class="stamp">Lock ${ri+1} open</div><div class="txt">${txt}</div></div><div class="actions">${next}</div>`;
+  } else {
+    roomHTML += r.parts.map((p,pi)=>partHTML(r,ri,p,pi)).join('');
+    roomHTML += `<div class="actions"><button class="btn primary" id="try" type="button">Try the lock</button><button class="btn ghost" id="hint" type="button" ${used>=r.hints.length?'disabled':''}>Hint (${r.hints.length-used} left)</button></div>
+    <div id="fb" role="status" aria-live="polite"></div>`;
+    if(used) roomHTML += `<ul class="hintlist">` + r.hints.slice(0,used).map((h,i)=>`<li><b>Hint ${i+1}</b>${esc(h)}</li>`).join('') + `</ul>`;
+  }
+  roomHTML += `</div></section>`;
+
+  app.innerHTML = `<div class="viewtabs" role="tablist">
+      <button class="btn ${S.mobile==='room'?'primary':'ghost'}" type="button" id="vRoom">Lock ${ri+1}</button>
+      <button class="btn ${S.mobile==='case'?'primary':'ghost'}" type="button" id="vCase">Case file</button></div>
+    <div class="desk" data-view="${S.mobile}"><div class="roomcol">${roomHTML}</div></div>`;
+  app.querySelector('.desk').appendChild(caseFile());
+  $('vRoom').onclick=()=>{S.mobile='room';save();renderDesk();};
+  $('vCase').onclick=()=>{S.mobile='case';save();renderDesk();};
+
+  if(solved){
+    if($('next')) $('next').onclick=()=>{S.view=Math.min(ri+1,S.cur);save();render();window.scrollTo(0,0);};
+    if($('toEnd')) $('toEnd').onclick=()=>{S.view='end';save();render();window.scrollTo(0,0);};
+    return;
+  }
+  $('hint').onclick=()=>{S.hints[r.id]=Math.min(r.hints.length,used+1);save();render();};
+  $('try').onclick=()=>attempt(ri);
+  const codeIn = app.querySelector('.code input');
+  if(codeIn) codeIn.addEventListener('keydown',e=>{if(e.key==='Enter')attempt(ri);});
+}
+
+function attempt(ri){
+  const r=ROOMS[ri], fb=$('fb');
+  const reads = r.parts.map((p,pi)=>readPart(ri,p,pi));
+  if(reads.some(x=>x.empty)){fb.className='fb note';fb.innerHTML='Complete every part before you try the lock. Incomplete tries are not counted.';return;}
+  const key = reads.map(x=>x.val).join('||');
+  if(H(r.salt+'::'+key)===r.hash){
+    S.solved[r.id]=key;
+    if(ri===S.cur){S.cur=ri+1;}
+    if(ri===ROOMS.length-1 && !S.end) S.end=Date.now();
+    save(); render(); window.scrollTo(0,0); return;
+  }
+  S.wrong++; save(); tick();
+  const lines = r.parts.map((p,pi)=>{
+    const ok = H(r.salt+'::p'+pi+'::'+reads[pi].val)===p.hash;
+    const name = r.parts.length>1 ? `<strong>${esc(p.label)}:</strong> ` : '';
+    if(p.kind==='match'){
+      const n = reads[pi].vals.filter((v,ii)=>H(r.salt+'::p'+pi+'::i'+ii+'::'+v)===p.itemHashes[ii]).length;
+      return `<span>${name}${n} of ${p.items.length} placed correctly.</span>`;
+    }
+    if(ok) return `<span>${name}correct.</span>`;
+    if(p.kind==='multi') return `<span>${name}not yet. Look for a choice the chart does not support, or one you left out.</span>`;
+    return `<span>${name}the code was not accepted.</span>`;
+  });
+  fb.className='fb bad'; fb.innerHTML=`<strong>The lock holds.</strong>${lines.join('')}`;
+}
+
+function certCode(){return H('wolf::'+S.names+'::'+S.start+'::'+S.end).toUpperCase().padStart(8,'0').slice(-8).replace(/(.{4})(.{4})/,'$1-$2');}
+
+function renderFinish(){
+  const d = new Date(S.end);
+  const date = d.toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});
+  const el = S.end - S.start;
+  app.innerHTML = `<div class="finish">
+    <section class="cert" aria-label="Certificate of completion">
+      <p class="eyebrow">George Mason University \u00b7 School of Nursing \u00b7 NURS 632</p>
+      <h2>Ward 7 cleared</h2>
+      <p>This certifies that</p>
+      <p class="who">${esc(S.names)}</p>
+      <p>opened all seven locks of <strong>The Wolf File</strong>, a clinical escape room on persistent predatory violence.</p>
+      <dl>
+        <div><dt>Completed</dt><dd>${esc(date)}</dd></div>
+        <div><dt>Time</dt><dd>${fmt(el)}${el>LIMIT?' (over)':''}</dd></div>
+        <div><dt>Hints</dt><dd>${hintTotal()} of 14</dd></div>
+        <div><dt>Misses</dt><dd>${S.wrong}</dd></div>
+        <div><dt>Code</dt><dd>${certCode()}</dd></div>
+      </dl>
+      <p class="note">Take a screenshot of this certificate and upload it to the Canvas assignment.</p>
+    </section>
+    <div class="debrief">
+      <section class="panel">
+        <h3>What to carry out of the room</h3>
+        <ul>
+          <li>Classify the violence before you treat it. Predatory acts are planned, goal-directed, low in arousal, and aimed at a chosen target.</li>
+          <li>A calm, cooperative MSE does not lower violence risk. This patient was polite at intake and broke a peer's jaw five months later.</li>
+          <li>Old diagnoses travel with the chart. Five months without psychotic or mood symptoms moved the formulation to personality pathology, frontotemporal NCD, and stimulant use disorder.</li>
+          <li>Work up the whole system: labs and side effects, then space, schedule, staffing, and institutional gaps.</li>
+          <li>His own history points to valproate and clonidine. Clozapine has the broadest anti-aggression evidence but lowers the seizure threshold. None of it moves without consent or legal authority.</li>
+        </ul>
+      </section>
+      <section class="panel">
+        <h3>Discussion</h3>
+        <ol>
+          <li>What does a normal mental status exam tell you about violence risk, and what does it leave out? Use this patient's intake as your example.</li>
+          <li>Where is the line between his right to refuse medication and the safety of peers and staff? What would have to be true for involuntary medication to be considered in your state?</li>
+          <li>Patients with psychopathic traits often provoke strong reactions in clinicians. How could countertransference shape prescribing, limit-setting, or documentation in this case, and how would you guard against it?</li>
+        </ol>
+      </section>
+    </div>
+    <div class="actions"><button class="btn ghost" id="review" type="button">Review Lock 1 rationale</button><span class="meta">Use the lock strip above to revisit any rationale.</span></div>
+  </div>`;
+  $('review').onclick=()=>{S.view=0;save();render();window.scrollTo(0,0);};
+}
+
+function restoreReset(){
+  $('resetzone').innerHTML='<button class="linkbtn" id="reset" type="button">Reset progress</button>';
+  bindReset();
+}
+function bindReset(){$('reset').onclick=()=>{const z=$('resetzone');z.innerHTML='Clear all progress on this device? <button class="linkbtn" id="yes" type="button">Reset</button> \u00b7 <button class="linkbtn" id="no" type="button">Cancel</button>';$('yes').onclick=()=>{S=fresh();save();restoreReset();render();};$('no').onclick=restoreReset;};}
+bindReset();
+
+render();
+</script>
+
+</body>
+</html>
